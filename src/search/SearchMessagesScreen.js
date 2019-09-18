@@ -13,10 +13,16 @@ import { getAuth } from '../account/accountsSelectors';
 
 type Props = {|
   auth: Auth,
+  // Warning: do not add new props without considering their effect on the
+  // behavior of this component's non-React internal state. See comment below.
 |};
 
 type State = {|
+  /** The list of messages returned for the latest query, or `null` if there is
+   *  effectively no "latest query" to have results from.
+   */
   messages: Message[] | null,
+  /** Whether there is currently an active valid network request. */
   isFetching: boolean,
 |};
 
@@ -26,11 +32,12 @@ class SearchMessagesScreen extends PureComponent<Props, State> {
     isFetching: false,
   };
 
-  performQuery = async (query: string) => {
+  /** PRIVATE
+   *  Performs a network request associated with a query. Does not
+   *  update or access internal state (except `auth`).
+   */
+  performQueryRaw = async (query: string): Promise<Message[]> => {
     const { auth } = this.props;
-
-    this.setState({ isFetching: true });
-
     const { messages } = await api.getMessages(
       auth,
       SEARCH_NARROW(query),
@@ -39,16 +46,58 @@ class SearchMessagesScreen extends PureComponent<Props, State> {
       0,
       false,
     );
+    return messages;
+  };
 
+  // Non-React state. See comment following.
+  lastIdSent: number = 1000;
+  lastIdReceived: number = 1000;
+
+  // This component is less pure than it should be. The correct behavior here is
+  // probably that, when props change, all outstanding asynchronous requests
+  // should be **synchronously** invalidated before the next render.
+  //
+  // As the only React prop this component has is `auth`, we ignore this for
+  // now: any updates to `auth` would involve this screen being torn down and
+  // reconstructed anyway. However, addition of any new props which need to
+  // invalidate outstanding requests on change will require more work.
+
+  /** PRIVATE
+   * Asynchronously performs a search query. Discards any responses thereto
+   * which have been delayed long enough to be out-of-order.
+   */
+  performQuery = async (query: string) => {
+    const id = ++this.lastIdSent;
+
+    this.setState({ isFetching: true });
+    const messages = await this.performQueryRaw(query);
+
+    if (this.lastIdReceived > id) {
+      return;
+    }
+
+    this.lastIdReceived = id;
+
+    // A query is concluded. Report the message-list.
     this.setState({ messages, isFetching: false });
   };
 
+  /** PRIVATE
+   * Mark all outstanding network queries as invalid.
+   */
+  invalidateOutstandingQueries = () => {
+    this.lastIdReceived = ++this.lastIdSent;
+  };
+
   handleQueryChange = (query: string) => {
-    if (query !== '') {
-      this.performQuery(query);
-    } else {
+    if (query === '') {
+      // The empty query can be resolved without a network call.
+      this.invalidateOutstandingQueries();
       this.setState({ messages: null, isFetching: false });
+      return;
     }
+
+    this.performQuery(query);
   };
 
   render() {
