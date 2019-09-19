@@ -1,6 +1,7 @@
 /* @flow strict-local */
 import React, { PureComponent } from 'react';
 import { View, TextInput, StyleSheet } from 'react-native';
+// import type { TextInputEvent } from 'react-native/Libraries/Components/';
 
 import Input from './Input';
 import type { Props as InputProps } from './Input';
@@ -40,6 +41,7 @@ export default class InputWithClearButton extends PureComponent<Props, State> {
       text,
     });
     if (this.props.onChangeText) {
+      console.log(`${Date.now()}: sending change signal for ${text}`);
       this.props.onChangeText(text);
     }
   };
@@ -51,6 +53,11 @@ export default class InputWithClearButton extends PureComponent<Props, State> {
     }
   };
 
+  /* onSomeEvent = (name: string) => (event: {}) => {
+    const evstr = JSON.stringify(Object.keys(event));
+    console.log(`${Date.now()}: ${name}: ${evstr}`);
+  }; */
+
   render() {
     const { canBeCleared, text } = this.state;
 
@@ -61,6 +68,10 @@ export default class InputWithClearButton extends PureComponent<Props, State> {
           textInputRef={textInput => {
             this.textInput = textInput;
           }}
+          /* onTextInput={this.onSomeEvent('onTextInput')}
+          onChange={this.onSomeEvent('onChange')}
+          onEndEditing={this.onSomeEvent('onEndEditing')}
+          onKeyPress={this.onSomeEvent('onKeyPress')} */
           onChangeText={this.handleChangeText}
           value={text}
         />
