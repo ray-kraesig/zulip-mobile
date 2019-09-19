@@ -70,18 +70,30 @@ class SearchMessagesScreen extends PureComponent<Props, State> {
   //
   // [1] https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html
 
+  queryTrack: { [key: string]: number } = {};
+  logQ = (query: string, msg: string) => {
+    const now = Date.now();
+    const timespan = now - this.queryTrack[query];
+    console.log(`${now}: (${timespan.toString().padStart(3)}µs since ${query}): ${msg}`);
+  };
+
   /** PRIVATE
    * Asynchronously performs a search query. Discards any responses thereto
    * which have been delayed long enough to be out-of-order.
    */
   performQuery = async (query: string) => {
+    this.logQ(query, 'async performing query');
     const id = ++this.lastIdSent;
 
     let messages: Message[] | null = null;
     if (query !== '') {
       // Make note that we're performing a query.
       this.setState({ isFetching: true });
+      this.logQ(query, 'performing raw query');
       messages = await this.performQueryRaw(query);
+      this.logQ(query, 'performed raw query');
+      await new Promise((y, n) => setTimeout(y, 500));
+      this.logQ(query, 'completed artifical query delay');
     } else {
       // The empty query can be resolved without a network call.
       messages = null;
@@ -94,21 +106,45 @@ class SearchMessagesScreen extends PureComponent<Props, State> {
     this.lastIdReceived = id;
 
     // A query is concluded. Report the message-list.
-    this.setState({ messages, isFetching: false });
+    this.logQ(query, 'pushing message state');
+    this.setState({ messages, isFetching: this.lastIdReceived !== id });
   };
 
+  LAST_QUERY = 'LAST_QUERY';
+
   handleQueryChange = (query: string) => {
+    // eslint-disable-next-line no-multi-assign
+    const time = Date.now();
+    this.queryTrack[query] = time;
+    this.queryTrack[this.LAST_QUERY] = time;
+    this.logQ(query, 'handling query change');
     this.performQuery(query);
   };
 
   render() {
     const { messages, isFetching } = this.state;
 
-    return (
+    if (messages === null || messages.length === 0 || isFetching) {
+      const time = Date.now();
+      console.log(
+        `${time} (${time - this.queryTrack[this.LAST_QUERY]}µs since last query): rendering`,
+      );
+    }
+
+    const ret = (
       <Screen search autoFocus searchBarOnChange={this.handleQueryChange} style={styles.flexed}>
         <SearchMessagesCard messages={messages} isFetching={isFetching} />
       </Screen>
     );
+
+    if (messages === null || messages.length === 0 || isFetching) {
+      const time = Date.now();
+      console.log(
+        `${time} (${time - this.queryTrack[this.LAST_QUERY]}µs since last query): rendered`,
+      );
+    }
+
+    return ret;
   }
 }
 
