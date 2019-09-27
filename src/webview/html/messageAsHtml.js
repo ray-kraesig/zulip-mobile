@@ -15,15 +15,13 @@ import { shortTime } from '../../utils/date';
 import aggregateReactions from '../../reactions/aggregateReactions';
 import { codeToEmojiMap } from '../../emoji/data';
 import processAlertWords from './processAlertWords';
+import { getFontAwesomeSpan } from '../css/cssFonts';
 
-const messageTagsAsHtml = (isStarred: boolean, timeEdited: number | void): string => {
+const messageTagsAsHtml = ({ timeEdited }: {| timeEdited: number | void |}): string => {
   const pieces = [];
   if (timeEdited !== undefined) {
     const editedTime = distanceInWordsToNow(timeEdited * 1000);
     pieces.push(template`<span class="message-tag">edited ${editedTime} ago</span>`);
-  }
-  if (isStarred) {
-    pieces.push('<span class="message-tag">starred</span>');
   }
   return !pieces.length ? '' : template`<div class="message-tags">$!${pieces.join('')}</div>`;
 };
@@ -55,18 +53,45 @@ const messageReactionListAsHtml = (
   return template`<div class="reaction-list">$!${htmlList.join('')}</div>`;
 };
 
+/**
+ * Wrap provided text in a container-block with additional elements, if
+ * necessary.
+ */
+// (At present the only such element is the "starred" indicator.)
+const textContainer = (
+  innerBlock: string,
+  { isStarred }: {| isStarred?: boolean |} = {},
+): string => {
+  // TODO?: always inject the star-holder, and hide or show it based on
+  // the parent .message's `data-starred` attribute.
+  //
+  // This would be very easy, but it would also bloat the size of the injected
+  // HTML. If we can avoid regenerating and reinjecting the HTML as often, the
+  // CSS-based solution will be a net win.
+  if (isStarred ?? false) {
+    return `
+    <div class="text-container" style="display: flex; flex-direction: row;">
+      ${innerBlock}
+      <span style="flex-grow: 1;"></span>
+      ${getFontAwesomeSpan('star', { classes: ['star-holder'] })}
+    </div>`;
+  }
+  return innerBlock;
+};
+
 const messageBody = (
   { alertWords, flags, ownEmail, allImageEmojiById }: BackgroundData,
   message: Message | Outbox,
 ) => {
   const { id, isOutbox, last_edit_timestamp, reactions } = message;
   const content = message.match_content !== undefined ? message.match_content : message.content;
+  const rendered_text = processAlertWords(content, id, alertWords, flags);
+
   return template`
-$!${processAlertWords(content, id, alertWords, flags)}
+$!${textContainer(rendered_text, { isStarred: !!flags.starred[id] })}
 $!${isOutbox ? '<div class="loading-spinner outbox-spinner"></div>' : ''}
-$!${messageTagsAsHtml(!!flags.starred[id], last_edit_timestamp)}
-$!${messageReactionListAsHtml(reactions, ownEmail, allImageEmojiById)}
-`;
+$!${messageTagsAsHtml({ timeEdited: last_edit_timestamp })}
+$!${messageReactionListAsHtml(reactions, ownEmail, allImageEmojiById)}`;
 };
 
 const widgetBody = (message: Message | Outbox) => template`
