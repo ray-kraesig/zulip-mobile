@@ -1,0 +1,8 @@
+@font-face {
+  font-family: 'FontAwesome';
+  src: local('FontAwesome')
+    , url("./fonts/FontAwesome.ttf") format("truetype")
+    , url("file:///android_asset/fonts/FontAwesome.ttf") format("truetype")
+    ;
+}
+.fa { font-family: 'FontAwesome'; }
