@@ -225,6 +225,13 @@ hr {
   transition-delay: 1s;
   transition-timing-function: ease-out;
 }
+.star-holder {
+  color: hsl(120, 100%, 20%); /* darkgreen */
+  display: none;
+}
+.message[data-starred="true"] .star-holder {
+  display: inherit !important;
+}
 .private-header {
   background: hsl(0, 0%, 27%);
   color: white;

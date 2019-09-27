@@ -14,4 +14,7 @@ body {
 .highlight {
   background-color: hsla(51, 100%, 64%, 0.42);
 }
+.star-holder {
+  color: hsl(120, 61%, 34%); /* forestgreen */
+}
 `;
