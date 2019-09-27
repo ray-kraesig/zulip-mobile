@@ -4,9 +4,11 @@ import cssBase from './cssBase';
 import cssPygments from './cssPygments';
 import cssEmojis from './cssEmojis';
 import cssNight from './cssNight';
+import { cssCommonFonts } from './cssFonts';
 
 export default (theme: ThemeName) => `
 <style>
+${cssCommonFonts}
 ${cssBase}
 ${theme === 'night' ? cssNight : ''}
 ${cssPygments(theme === 'night')}
