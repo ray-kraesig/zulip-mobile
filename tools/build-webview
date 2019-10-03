@@ -167,4 +167,54 @@ rsync -a --no-D --delete --delete-excluded --exclude=README.md "$staging/." "$de
 # Post-sync: additional build steps
 ################################################################################
 
-# None yet.
+# Consider banishing items to platform-specific build _scripts_, if this phase
+#   gets too large.
+
+# Create font symlinks.
+if [ "$target" == "ios" ]; then
+    # Create the iOS-specific font symlinks.
+
+    # The `react-native-vector-icons` package directs and expects Xcode to put
+    # these at the root of the bundle, for access by all React components. Since
+    # we want to limit the WKWebView to only accessing files in its associated
+    # static directory, we add symlinks from within there out to the bundle
+    # root.
+    #
+    # Note that the fonts which these symlinks reference DO NOT EXIST at this
+    # site in the development tree! Xcode will copy the fonts and symlinks both
+    # into the bundle from separate locations, after which they (should) line
+    # up.
+    #
+    # N.B: At present, these symlinks are destroyed by rsync on every run. If
+    # more than a small handful of these are needed, they should be put into
+    # `static/` and `--exclude`d in Android builds.
+
+
+    # List of fonts needed. (Presently there's only the one.)
+    fonts=(FontAwesome)
+
+    mkdir -p "$dest/fonts"
+    for fontname in "${fonts[@]}"; do
+        fontfile="${fontname}.ttf"
+        linkname="$dest/fonts/$fontfile"
+
+        # `rsync` should have removed all stray files; probably what's happened
+        # is that someone's unnecessarily copied one of our font files into
+        # `webview/static`.
+        if [ -e "$linkname" ]; then
+            err "existing file \`$linkname\` would be clobbered by a symlink."
+            exit 1;
+        fi
+
+        # At runtime, the link targets should expand to...
+        #     $BUNDLE_ROOT/webview/fonts/../../$fontfile
+        # ...and thereby...
+        #     $BUNDLE_ROOT/$fontfile
+        #
+        ln -s "../../$fontfile" "$linkname"
+    done
+else
+    # Android doesn't need font symlinks: the `file:///android_asset/fonts`
+    # directory is used by the WebView and native components alike.
+    true;
+fi
