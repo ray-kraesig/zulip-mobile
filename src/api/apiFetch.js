@@ -6,6 +6,8 @@ import { encodeParamsForUrl, isValidUrl } from '../utils/url';
 import userAgent from '../utils/userAgent';
 import { networkActivityStart, networkActivityStop } from '../utils/networkActivity';
 import { makeErrorFromApi } from './apiErrors';
+import store from '../boot/store';
+import { getSettings } from '../directSelectors';
 
 const apiVersion = 'api/v1';
 
@@ -31,10 +33,18 @@ export const getFetchParams = (auth: Auth, params: {} = {}) => {
       ? 'multipart/form-data'
       : 'application/x-www-form-urlencoded; charset=utf-8';
 
+  // HACK: access Redux store directly.
+  //
+  // In future, rather than passing the Auth around as transparent data, the
+  // Auth and the locale will likely be bound together into a single object with
+  // appropriate methods.
+  const { locale } = getSettings(store.getState());
+
   return {
     headers: {
       'Content-Type': contentType,
       'User-Agent': userAgent,
+      'Accept-Language': locale,
       ...getAuthHeaders(auth),
     },
     ...params,
