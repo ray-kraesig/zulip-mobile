@@ -93,6 +93,12 @@ hr {
   word-wrap: break-word;
   margin: 16px;
   -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+}
+.message::after, .loading::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 .static-timestamp {
   color: hsl(0, 0%, 60%);
@@ -137,6 +143,7 @@ hr {
   width: 48px;
   height: 48px;
   margin-right: 16px;
+  float: left;
 }
 .avatar img {
   width: 100%;
@@ -145,7 +152,6 @@ hr {
 .content {
   width: 100%;
   max-width: 100%;
-  overflow: hidden;
 }
 .username {
   font-weight: bold;
