@@ -90,7 +90,6 @@ hr {
 }
 .message,
 .loading {
-  display: flex;
   word-wrap: break-word;
   margin: 16px;
   -webkit-tap-highlight-color: transparent;
