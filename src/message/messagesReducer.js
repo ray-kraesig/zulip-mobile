@@ -2,6 +2,14 @@
 import omit from 'lodash.omit';
 
 import type { MessagesState, Action } from '../types';
+import type {
+  EventReactionAddAction,
+  EventReactionRemoveAction,
+  EventNewMessageAction,
+  EventSubmessageAction,
+  EventMessageDeleteAction,
+  EventUpdateMessageAction,
+} from '../actionTypes';
 import {
   DEAD_QUEUE,
   LOGOUT,
@@ -20,7 +28,7 @@ import { groupItemsById } from '../utils/misc';
 
 const initialState: MessagesState = NULL_OBJECT;
 
-const eventReactionAdd = (state, action) => {
+const eventReactionAdd = (state: MessagesState, action: EventReactionAddAction): MessagesState => {
   const oldMessage = state[action.message_id];
   if (!oldMessage) {
     return state;
@@ -39,7 +47,10 @@ const eventReactionAdd = (state, action) => {
   };
 };
 
-const eventReactionRemove = (state, action) => {
+const eventReactionRemove = (
+  state: MessagesState,
+  action: EventReactionRemoveAction,
+): MessagesState => {
   const oldMessage = state[action.message_id];
   if (!oldMessage) {
     return state;
@@ -55,7 +66,7 @@ const eventReactionRemove = (state, action) => {
   };
 };
 
-const eventNewMessage = (state, action) => {
+const eventNewMessage = (state: MessagesState, action: EventNewMessageAction): MessagesState => {
   // TODO: Optimize -- Only update if the new message belongs to at least
   // one narrow that is caught up.
   if (state[action.message.id]) {
@@ -67,7 +78,7 @@ const eventNewMessage = (state, action) => {
   };
 };
 
-const eventSubmessage = (state, action) => {
+const eventSubmessage = (state: MessagesState, action: EventSubmessageAction): MessagesState => {
   const message = state[action.message_id];
   if (!message) {
     return state;
@@ -90,14 +101,20 @@ const eventSubmessage = (state, action) => {
   };
 };
 
-const eventMessageDelete = (state, action) => {
+const eventMessageDelete = (
+  state: MessagesState,
+  action: EventMessageDeleteAction,
+): MessagesState => {
   if (!state[action.messageId]) {
     return state;
   }
   return omit(state, action.messageId);
 };
 
-const eventUpdateMessage = (state, action) => {
+const eventUpdateMessage = (
+  state: MessagesState,
+  action: EventUpdateMessageAction,
+): MessagesState => {
   const oldMessage = state[action.message_id];
   if (!oldMessage) {
     return state;

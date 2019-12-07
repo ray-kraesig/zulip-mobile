@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { FetchingState, Action } from '../types';
+import type { MessageFetchStartAction, MessageFetchCompleteAction } from '../actionTypes';
 import {
   DEAD_QUEUE,
   LOGOUT,
@@ -14,7 +15,10 @@ import { DEFAULT_FETCHING } from './fetchingSelectors';
 
 const initialState: FetchingState = NULL_OBJECT;
 
-const messageFetchStart = (state, action) => {
+const messageFetchStart = (
+  state: FetchingState,
+  action: MessageFetchStartAction,
+): FetchingState => {
   const key = JSON.stringify(action.narrow);
   const currentValue = state[key] || DEFAULT_FETCHING;
 
@@ -27,7 +31,10 @@ const messageFetchStart = (state, action) => {
   };
 };
 
-const messageFetchComplete = (state, action) => {
+const messageFetchComplete = (
+  state: FetchingState,
+  action: MessageFetchCompleteAction,
+): FetchingState => {
   const key = JSON.stringify(action.narrow);
   const currentValue = state[key] || DEFAULT_FETCHING;
 

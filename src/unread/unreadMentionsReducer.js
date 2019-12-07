@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { UnreadMentionsState, Action } from '../types';
+import type { EventUpdateMessageFlagsAction } from '../actionTypes';
 import {
   REALM_INIT,
   LOGOUT,
@@ -13,7 +14,10 @@ import { NULL_ARRAY } from '../nullObjects';
 
 const initialState: UnreadMentionsState = NULL_ARRAY;
 
-const eventUpdateMessageFlags = (state, action) => {
+const eventUpdateMessageFlags = (
+  state: UnreadMentionsState,
+  action: EventUpdateMessageFlagsAction,
+): UnreadMentionsState => {
   if (action.flag !== 'read') {
     return state;
   }

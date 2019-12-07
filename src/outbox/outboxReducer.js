@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { OutboxState, Action, Outbox } from '../types';
+import type { MessageSendStartAction } from '../actionTypes';
 import {
   INITIAL_FETCH_COMPLETE,
   MESSAGE_SEND_START,
@@ -14,7 +15,7 @@ import { filterArray } from '../utils/immutability';
 
 const initialState = NULL_ARRAY;
 
-const messageSendStart = (state, action) => {
+const messageSendStart = (state: OutboxState, action: MessageSendStartAction): OutboxState => {
   const message = state.find(item => item.timestamp === action.outbox.timestamp);
   if (message) {
     return state;

@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { UnreadHuddlesState, Action } from '../types';
+import type { EventNewMessageAction, EventUpdateMessageFlagsAction } from '../actionTypes';
 import {
   REALM_INIT,
   LOGOUT,
@@ -14,7 +15,10 @@ import { NULL_ARRAY } from '../nullObjects';
 
 const initialState: UnreadHuddlesState = NULL_ARRAY;
 
-const eventNewMessage = (state, action) => {
+const eventNewMessage = (
+  state: UnreadHuddlesState,
+  action: EventNewMessageAction,
+): UnreadHuddlesState => {
   if (action.message.type !== 'private') {
     return state;
   }
@@ -34,7 +38,10 @@ const eventNewMessage = (state, action) => {
   );
 };
 
-const eventUpdateMessageFlags = (state, action) => {
+const eventUpdateMessageFlags = (
+  state: UnreadHuddlesState,
+  action: EventUpdateMessageFlagsAction,
+): UnreadHuddlesState => {
   if (action.flag !== 'read') {
     return state;
   }

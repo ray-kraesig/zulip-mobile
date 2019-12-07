@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { Action, FlagsState, Message } from '../types';
+import type { EventUpdateMessageFlagsAction } from '../actionTypes';
 import {
   DEAD_QUEUE,
   MESSAGE_FETCH_COMPLETE,
@@ -80,7 +81,10 @@ const processFlagsForMessages = (state: FlagsState, messages: Message[]): FlagsS
   return stateChanged ? deeperMerge(state, newState) : state;
 };
 
-const eventUpdateMessageFlags = (state, action) => {
+const eventUpdateMessageFlags = (
+  state: FlagsState,
+  action: EventUpdateMessageFlagsAction,
+): FlagsState => {
   if (action.all) {
     return addFlagsForMessages(initialState, Object.keys(action.allMessages).map(Number), ['read']);
   }

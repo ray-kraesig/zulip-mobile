@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { UnreadPmsState, Action } from '../types';
+import type { EventNewMessageAction, EventUpdateMessageFlagsAction } from '../actionTypes';
 import {
   REALM_INIT,
   LOGOUT,
@@ -13,7 +14,7 @@ import { NULL_ARRAY } from '../nullObjects';
 
 const initialState: UnreadPmsState = NULL_ARRAY;
 
-const eventNewMessage = (state, action) => {
+const eventNewMessage = (state: UnreadPmsState, action: EventNewMessageAction): UnreadPmsState => {
   if (action.message.type !== 'private') {
     return state;
   }
@@ -29,7 +30,10 @@ const eventNewMessage = (state, action) => {
   return addItemsToPmArray(state, [action.message.id], action.message.sender_id);
 };
 
-const eventUpdateMessageFlags = (state, action) => {
+const eventUpdateMessageFlags = (
+  state: UnreadPmsState,
+  action: EventUpdateMessageFlagsAction,
+): UnreadPmsState => {
   if (action.flag !== 'read') {
     return state;
   }

@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { UnreadStreamsState, Action } from '../types';
+import type { EventNewMessageAction, EventUpdateMessageFlagsAction } from '../actionTypes';
 import {
   REALM_INIT,
   LOGOUT,
@@ -13,7 +14,10 @@ import { NULL_ARRAY } from '../nullObjects';
 
 const initialState: UnreadStreamsState = NULL_ARRAY;
 
-const eventNewMessage = (state, action) => {
+const eventNewMessage = (
+  state: UnreadStreamsState,
+  action: EventNewMessageAction,
+): UnreadStreamsState => {
   if (action.message.type !== 'stream') {
     return state;
   }
@@ -30,7 +34,10 @@ const eventNewMessage = (state, action) => {
   );
 };
 
-const eventUpdateMessageFlags = (state, action) => {
+const eventUpdateMessageFlags = (
+  state: UnreadStreamsState,
+  action: EventUpdateMessageFlagsAction,
+): UnreadStreamsState => {
   if (action.flag !== 'read') {
     return state;
   }

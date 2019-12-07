@@ -2,6 +2,7 @@
 import type { NavigationAction } from 'react-navigation';
 
 import type { NavigationState, Action } from '../types';
+import type { RehydrateAction } from '../actionTypes';
 import AppNavigator from './AppNavigator';
 import {
   REHYDRATE,
@@ -31,7 +32,7 @@ export const getStateForRoute = (route: string): NavigationState => {
   return state;
 };
 
-const rehydrate = (state, action) => {
+const rehydrate = (state: NavigationState, action: RehydrateAction): NavigationState => {
   // If there's no data to rehydrate, or no account data, show welcome screen.
   if (!action.payload || !action.payload.accounts) {
     return getStateForRoute('welcome');

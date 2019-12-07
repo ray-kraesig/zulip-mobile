@@ -2,6 +2,12 @@
 import union from 'lodash.union';
 
 import type { NarrowsState, Action } from '../types';
+import type {
+  MessageFetchCompleteAction,
+  EventNewMessageAction,
+  EventMessageDeleteAction,
+  EventUpdateMessageFlagsAction,
+} from '../actionTypes';
 import { ensureUnreachable } from '../types';
 import {
   DEAD_QUEUE,
@@ -19,7 +25,10 @@ import { NULL_OBJECT } from '../nullObjects';
 
 const initialState: NarrowsState = NULL_OBJECT;
 
-const messageFetchComplete = (state, action) => {
+const messageFetchComplete = (
+  state: NarrowsState,
+  action: MessageFetchCompleteAction,
+): NarrowsState => {
   const key = JSON.stringify(action.narrow);
   const fetchedMessageIds = action.messages.map(message => message.id);
   const replaceExisting =
@@ -32,7 +41,7 @@ const messageFetchComplete = (state, action) => {
   };
 };
 
-const eventNewMessage = (state, action) => {
+const eventNewMessage = (state: NarrowsState, action: EventNewMessageAction): NarrowsState => {
   let stateChange = false;
   const newState: NarrowsState = {};
   Object.keys(state).forEach(key => {
@@ -50,7 +59,10 @@ const eventNewMessage = (state, action) => {
   return stateChange ? newState : state;
 };
 
-const eventMessageDelete = (state, action) => {
+const eventMessageDelete = (
+  state: NarrowsState,
+  action: EventMessageDeleteAction,
+): NarrowsState => {
   let stateChange = false;
   const newState: NarrowsState = {};
   Object.keys(state).forEach(key => {
@@ -83,7 +95,10 @@ const updateFlagNarrow = (state, narrowStr, operation, messageIds): NarrowsState
   }
 };
 
-const eventUpdateMessageFlags = (state, action) => {
+const eventUpdateMessageFlags = (
+  state: NarrowsState,
+  action: EventUpdateMessageFlagsAction,
+): NarrowsState => {
   const { flag, operation, messages: messageIds } = action;
   if (flag === 'starred') {
     return updateFlagNarrow(state, STARRED_NARROW_STR, operation, messageIds);

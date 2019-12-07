@@ -10,11 +10,19 @@ import {
 } from '../actionConstants';
 
 import type { AccountsState, Identity, Action } from '../types';
+import type {
+  RealmAddAction,
+  AccountSwitchAction,
+  LoginSuccessAction,
+  AckPushTokenAction,
+  UnackPushTokenAction,
+  AccountRemoveAction,
+} from '../actionTypes';
 import { NULL_ARRAY } from '../nullObjects';
 
 const initialState = NULL_ARRAY;
 
-const realmAdd = (state, action) => {
+const realmAdd = (state: AccountsState, action: RealmAddAction): AccountsState => {
   const accountIndex = state.findIndex(account => account.realm === action.realm);
 
   if (accountIndex !== -1) {
@@ -32,7 +40,7 @@ const realmAdd = (state, action) => {
   ];
 };
 
-const accountSwitch = (state, action) => {
+const accountSwitch = (state: AccountsState, action: AccountSwitchAction): AccountsState => {
   if (action.index === 0) {
     return state;
   }
@@ -47,7 +55,7 @@ const findAccount = (state: AccountsState, identity: Identity): number => {
   );
 };
 
-const loginSuccess = (state, action) => {
+const loginSuccess = (state: AccountsState, action: LoginSuccessAction): AccountsState => {
   const { realm, email, apiKey } = action;
   const accountIndex = findAccount(state, { realm, email });
   if (accountIndex === -1) {
@@ -60,7 +68,7 @@ const loginSuccess = (state, action) => {
   ];
 };
 
-const ackPushToken = (state, action) => {
+const ackPushToken = (state: AccountsState, action: AckPushTokenAction): AccountsState => {
   const { pushToken: ackedPushToken, identity } = action;
   const accountIndex = findAccount(state, identity);
   if (accountIndex === -1) {
@@ -73,7 +81,7 @@ const ackPushToken = (state, action) => {
   ];
 };
 
-const unackPushToken = (state, action) => {
+const unackPushToken = (state: AccountsState, action: UnackPushTokenAction): AccountsState => {
   const { identity } = action;
   const accountIndex = findAccount(state, identity);
   if (accountIndex === -1) {
@@ -86,7 +94,7 @@ const unackPushToken = (state, action) => {
   ];
 };
 
-const accountRemove = (state, action) => {
+const accountRemove = (state: AccountsState, action: AccountRemoveAction): AccountsState => {
   const newState = state.slice();
   newState.splice(action.index, 1);
   return newState;
