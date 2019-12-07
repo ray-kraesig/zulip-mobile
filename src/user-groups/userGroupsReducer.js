@@ -1,5 +1,10 @@
 /* @flow strict-local */
 import type { UserGroupsState, Action } from '../types';
+import type {
+  EventUserGroupUpdateAction,
+  EventUserGroupAddMembersAction,
+  EventUserGroupRemoveMembersAction,
+} from '../actionTypes';
 import {
   LOGOUT,
   LOGIN_SUCCESS,
@@ -15,7 +20,7 @@ import { NULL_ARRAY } from '../nullObjects';
 
 const initialState: UserGroupsState = NULL_ARRAY;
 
-const eventUserGroupUpdate = (state, action) =>
+const eventUserGroupUpdate = (state: UserGroupsState, action: EventUserGroupUpdateAction): UserGroupsState =>
   state.map(userGroup =>
     action.group_id !== userGroup.id
       ? userGroup
@@ -25,7 +30,7 @@ const eventUserGroupUpdate = (state, action) =>
         },
   );
 
-const eventUserGroupAddMembers = (state, action) =>
+const eventUserGroupAddMembers = (state: UserGroupsState, action: EventUserGroupAddMembersAction): UserGroupsState =>
   state.map(userGroup =>
     action.group_id !== userGroup.id
       ? userGroup
@@ -35,7 +40,7 @@ const eventUserGroupAddMembers = (state, action) =>
         },
   );
 
-const eventUserGroupRemoveMembers = (state, action) =>
+const eventUserGroupRemoveMembers = (state: UserGroupsState, action: EventUserGroupRemoveMembersAction): UserGroupsState =>
   state.map(userGroup =>
     action.group_id !== userGroup.id
       ? userGroup

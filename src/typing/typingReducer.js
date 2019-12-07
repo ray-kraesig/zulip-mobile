@@ -1,5 +1,10 @@
 /* @flow strict-local */
 import type { Action, TypingState } from '../types';
+import type {
+  EventTypingStartAction,
+  EventTypingStopAction,
+  ClearTypingAction,
+} from '../actionTypes';
 import {
   EVENT_TYPING_START,
   EVENT_TYPING_STOP,
@@ -14,7 +19,7 @@ import { NULL_OBJECT } from '../nullObjects';
 
 const initialState: TypingState = NULL_OBJECT;
 
-const eventTypingStart = (state, action) => {
+const eventTypingStart = (state: TypingState, action: EventTypingStartAction): TypingState => {
   if (action.sender.email === action.ownEmail) {
     // don't change state when self is typing
     return state;
@@ -43,7 +48,7 @@ const eventTypingStart = (state, action) => {
   };
 };
 
-const eventTypingStop = (state, action) => {
+const eventTypingStop = (state: TypingState, action: EventTypingStopAction): TypingState => {
   const normalizedRecipients = normalizeRecipientsSansMe(action.recipients, action.ownEmail);
   const previousTypingUsers = state[normalizedRecipients];
 
@@ -71,7 +76,7 @@ const eventTypingStop = (state, action) => {
   return newState;
 };
 
-const clearTyping = (state, action) => {
+const clearTyping = (state: TypingState, action: ClearTypingAction): TypingState => {
   const newState = { ...state };
   action.outdatedNotifications.map(recipients => delete newState[recipients]);
   return newState;

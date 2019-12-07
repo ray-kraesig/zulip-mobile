@@ -1,5 +1,8 @@
 /* @flow strict-local */
 import type { Debug, Dimensions, EditMessage, Narrow, Orientation, Action } from '../types';
+import type {
+  RehydrateAction,
+} from '../actionTypes';
 import {
   REHYDRATE,
   DEAD_QUEUE,
@@ -97,7 +100,7 @@ const initialState: SessionState = {
   },
 };
 
-const rehydrate = (state, action) => {
+const rehydrate = (state: SessionState, action: RehydrateAction): SessionState => {
   const { payload } = action;
   const haveApiKey = !!(payload && payload.accounts && hasAuth(payload));
   return {
