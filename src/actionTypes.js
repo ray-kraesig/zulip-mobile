@@ -105,111 +105,111 @@ export type { NavigationAction } from 'react-navigation';
  *     In any case it will only contain the keys we configure to be persisted.
  * @prop error
  */
-type RehydrateAction = {|
+export type RehydrateAction = {|
   type: typeof REHYDRATE,
   payload: GlobalState | { accounts: null } | {||} | void,
   error: mixed,
 |};
 
-type AppOnlineAction = {|
+export type AppOnlineAction = {|
   type: typeof APP_ONLINE,
   isOnline: boolean,
 |};
 
-type AppStateAction = {|
+export type AppStateAction = {|
   type: typeof APP_STATE,
   isActive: boolean,
 |};
 
-type DeadQueueAction = {|
+export type DeadQueueAction = {|
   type: typeof DEAD_QUEUE,
 |};
 
-type InitSafeAreaInsetsAction = {|
+export type InitSafeAreaInsetsAction = {|
   type: typeof INIT_SAFE_AREA_INSETS,
   safeAreaInsets: Dimensions,
 |};
 
-type AppOrientationAction = {|
+export type AppOrientationAction = {|
   type: typeof APP_ORIENTATION,
   orientation: Orientation,
 |};
 
-type StartEditMessageAction = {|
+export type StartEditMessageAction = {|
   type: typeof START_EDIT_MESSAGE,
   messageId: number,
   message: string,
   topic: string,
 |};
 
-type CancelEditMessageAction = {|
+export type CancelEditMessageAction = {|
   type: typeof CANCEL_EDIT_MESSAGE,
 |};
 
-type DebugFlagToggleAction = {|
+export type DebugFlagToggleAction = {|
   type: typeof DEBUG_FLAG_TOGGLE,
   key: string,
   value: boolean,
 |};
 
-type AccountSwitchAction = {|
+export type AccountSwitchAction = {|
   type: typeof ACCOUNT_SWITCH,
   index: number,
 |};
 
-type RealmAddAction = {|
+export type RealmAddAction = {|
   type: typeof REALM_ADD,
   realm: string,
 |};
 
-type AccountRemoveAction = {|
+export type AccountRemoveAction = {|
   type: typeof ACCOUNT_REMOVE,
   index: number,
 |};
 
-type LoginSuccessAction = {|
+export type LoginSuccessAction = {|
   type: typeof LOGIN_SUCCESS,
   realm: string,
   email: string,
   apiKey: string,
 |};
 
-type LogoutAction = {|
+export type LogoutAction = {|
   type: typeof LOGOUT,
 |};
 
-type RealmInitAction = {|
+export type RealmInitAction = {|
   type: typeof REALM_INIT,
   data: InitialData,
 |};
 
 /** We learned the device token from the system.  See `SessionState`. */
-type GotPushTokenAction = {|
+export type GotPushTokenAction = {|
   type: typeof GOT_PUSH_TOKEN,
   pushToken: string,
 |};
 
 /** We're about to tell the server to forget our device token. */
-type UnackPushTokenAction = {|
+export type UnackPushTokenAction = {|
   type: typeof UNACK_PUSH_TOKEN,
   identity: Identity,
 |};
 
 /** The server acknowledged our device token. */
-type AckPushTokenAction = {|
+export type AckPushTokenAction = {|
   type: typeof ACK_PUSH_TOKEN,
   identity: Identity,
   pushToken: string,
 |};
 
-type MessageFetchStartAction = {|
+export type MessageFetchStartAction = {|
   type: typeof MESSAGE_FETCH_START,
   narrow: Narrow,
   numBefore: number,
   numAfter: number,
 |};
 
-type MessageFetchCompleteAction = {|
+export type MessageFetchCompleteAction = {|
   type: typeof MESSAGE_FETCH_COMPLETE,
   messages: Message[],
   narrow: Narrow,
@@ -220,11 +220,11 @@ type MessageFetchCompleteAction = {|
   foundOldest: boolean | void,
 |};
 
-type InitialFetchStartAction = {|
+export type InitialFetchStartAction = {|
   type: typeof INITIAL_FETCH_START,
 |};
 
-type InitialFetchCompleteAction = {|
+export type InitialFetchCompleteAction = {|
   type: typeof INITIAL_FETCH_COMPLETE,
 |};
 
@@ -232,17 +232,17 @@ type ServerEvent = {|
   id: number,
 |};
 
-type EventAlertWordsAction = {|
+export type EventAlertWordsAction = {|
   type: typeof EVENT_ALERT_WORDS,
   alertWords: AlertWordsState,
 |};
 
-type EventRealmFiltersAction = {|
+export type EventRealmFiltersAction = {|
   type: typeof EVENT_REALM_FILTERS,
   realm_filters: RealmFilter[],
 |};
 
-type EventUpdateGlobalNotificationsSettingsAction = {|
+export type EventUpdateGlobalNotificationsSettingsAction = {|
   ...ServerEvent,
   type: typeof EVENT_UPDATE_GLOBAL_NOTIFICATIONS_SETTINGS,
   notification_name: | 'enable_offline_push_notiications'
@@ -251,14 +251,14 @@ type EventUpdateGlobalNotificationsSettingsAction = {|
   setting: boolean,
 |};
 
-type EventSubscriptionAddAction = {|
+export type EventSubscriptionAddAction = {|
   ...ServerEvent,
   type: typeof EVENT_SUBSCRIPTION,
   op: 'add',
   subscriptions: Subscription[],
 |};
 
-type EventSubscriptionRemoveAction = {|
+export type EventSubscriptionRemoveAction = {|
   ...ServerEvent,
   type: typeof EVENT_SUBSCRIPTION,
   op: 'remove',
@@ -268,7 +268,7 @@ type EventSubscriptionRemoveAction = {|
   }>,
 |};
 
-type EventSubscriptionUpdateAction = {|
+export type EventSubscriptionUpdateAction = {|
   ...ServerEvent,
   type: typeof EVENT_SUBSCRIPTION,
   op: 'update',
@@ -279,7 +279,7 @@ type EventSubscriptionUpdateAction = {|
   value: boolean | number | string,
 |};
 
-type EventSubscriptionPeerAddAction = {|
+export type EventSubscriptionPeerAddAction = {|
   ...ServerEvent,
   type: typeof EVENT_SUBSCRIPTION,
   op: 'peer_add',
@@ -287,7 +287,7 @@ type EventSubscriptionPeerAddAction = {|
   user_id: number,
 |};
 
-type EventSubscriptionPeerRemoveAction = {|
+export type EventSubscriptionPeerRemoveAction = {|
   ...ServerEvent,
   type: typeof EVENT_SUBSCRIPTION,
   op: 'peer_remove',
@@ -295,28 +295,28 @@ type EventSubscriptionPeerRemoveAction = {|
   user_id: number,
 |};
 
-type GenericEventAction = {|
+export type GenericEventAction = {|
   type: typeof EVENT,
   event: StreamEvent,
 |};
 
-type EventNewMessageAction = {|
+export type EventNewMessageAction = {|
   ...$Diff<MessageEvent, { flags: mixed }>,
   type: typeof EVENT_NEW_MESSAGE,
   caughtUp: CaughtUpState,
   ownEmail: string,
 |};
 
-type EventSubmessageAction = {|
+export type EventSubmessageAction = {|
   ...SubmessageEvent,
   type: typeof EVENT_SUBMESSAGE,
 |};
 
-type EventMessageDeleteAction = {|
+export type EventMessageDeleteAction = {|
   type: typeof EVENT_MESSAGE_DELETE,
   messageId: number,
 |};
-type EventUpdateMessageAction = {|
+export type EventUpdateMessageAction = {|
   ...ServerEvent,
   type: typeof EVENT_UPDATE_MESSAGE,
   edit_timestamp: number,
@@ -339,19 +339,19 @@ type EventReactionCommon = {|
   message_id: number,
 |};
 
-type EventReactionAddAction = {|
+export type EventReactionAddAction = {|
   ...ServerEvent,
   ...EventReactionCommon,
   type: typeof EVENT_REACTION_ADD,
 |};
 
-type EventReactionRemoveAction = {|
+export type EventReactionRemoveAction = {|
   ...ServerEvent,
   ...EventReactionCommon,
   type: typeof EVENT_REACTION_REMOVE,
 |};
 
-type EventPresenceAction = {|
+export type EventPresenceAction = {|
   ...PresenceEvent,
   type: typeof EVENT_PRESENCE,
 |};
@@ -370,19 +370,19 @@ type EventTypingCommon = {|
   time: number,
 |};
 
-type EventTypingStartAction = {|
+export type EventTypingStartAction = {|
   ...EventTypingCommon,
   type: typeof EVENT_TYPING_START,
   op: 'start',
 |};
 
-type EventTypingStopAction = {|
+export type EventTypingStopAction = {|
   ...EventTypingCommon,
   type: typeof EVENT_TYPING_STOP,
   op: 'stop',
 |};
 
-type EventUpdateMessageFlagsAction = {|
+export type EventUpdateMessageFlagsAction = {|
   ...ServerEvent,
   type: typeof EVENT_UPDATE_MESSAGE_FLAGS,
   all: boolean,
@@ -392,45 +392,45 @@ type EventUpdateMessageFlagsAction = {|
   operation: 'add' | 'remove',
 |};
 
-type EventUserAddAction = {|
+export type EventUserAddAction = {|
   ...ServerEvent,
   type: typeof EVENT_USER_ADD,
   person: User,
 |};
 
-type EventUserRemoveAction = {|
+export type EventUserRemoveAction = {|
   type: typeof EVENT_USER_REMOVE,
   // In reality there's more -- but this will prevent accidentally using
   // the type before going and adding those other properties here properly.
 |};
 
-type EventUserUpdateAction = {|
+export type EventUserUpdateAction = {|
   type: typeof EVENT_USER_UPDATE,
   // In reality there's more -- but this will prevent accidentally using
   // the type before going and adding those other properties here properly.
 |};
 
-type EventMutedTopicsAction = {|
+export type EventMutedTopicsAction = {|
   ...ServerEvent,
   type: typeof EVENT_MUTED_TOPICS,
   muted_topics: MuteState,
 |};
 
-type EventUserGroupAddAction = {|
+export type EventUserGroupAddAction = {|
   ...ServerEvent,
   type: typeof EVENT_USER_GROUP_ADD,
   op: 'add',
   group: UserGroup,
 |};
 
-type EventUserGroupRemoveAction = {|
+export type EventUserGroupRemoveAction = {|
   ...ServerEvent,
   type: typeof EVENT_USER_GROUP_REMOVE,
   op: 'remove',
   group_id: number,
 |};
 
-type EventUserGroupUpdateAction = {|
+export type EventUserGroupUpdateAction = {|
   ...ServerEvent,
   type: typeof EVENT_USER_GROUP_UPDATE,
   op: 'update',
@@ -438,7 +438,7 @@ type EventUserGroupUpdateAction = {|
   data: { description?: string, name?: string },
 |};
 
-type EventUserGroupAddMembersAction = {|
+export type EventUserGroupAddMembersAction = {|
   ...ServerEvent,
   type: typeof EVENT_USER_GROUP_ADD_MEMBERS,
   op: 'add_members',
@@ -446,7 +446,7 @@ type EventUserGroupAddMembersAction = {|
   user_ids: number[],
 |};
 
-type EventUserGroupRemoveMembersAction = {|
+export type EventUserGroupRemoveMembersAction = {|
   ...ServerEvent,
   type: typeof EVENT_USER_GROUP_REMOVE_MEMBERS,
   op: 'remove_members',
@@ -454,12 +454,12 @@ type EventUserGroupRemoveMembersAction = {|
   user_ids: number[],
 |};
 
-type EventRealmEmojiUpdateAction = {|
+export type EventRealmEmojiUpdateAction = {|
   type: typeof EVENT_REALM_EMOJI_UPDATE,
   realm_emoji: RealmEmojiById,
 |};
 
-type EventUpdateDisplaySettingsAction = {|
+export type EventUpdateDisplaySettingsAction = {|
   type: typeof EVENT_UPDATE_DISPLAY_SETTINGS,
   setting_name: string,
   /** In reality, this can be a variety of types. It's boolean for a
@@ -468,25 +468,25 @@ type EventUpdateDisplaySettingsAction = {|
   setting: boolean,
 |};
 
-type EventReactionAction = EventReactionAddAction | EventReactionRemoveAction;
+export type EventReactionAction = EventReactionAddAction | EventReactionRemoveAction;
 
-type EventUserStatusUpdateAction = {|
+export type EventUserStatusUpdateAction = {|
   ...UserStatusEvent,
   type: typeof EVENT_USER_STATUS_UPDATE,
 |};
 
-type EventSubscriptionAction =
+export type EventSubscriptionAction =
   | EventSubscriptionAddAction
   | EventSubscriptionRemoveAction
   | EventSubscriptionUpdateAction
   | EventSubscriptionPeerAddAction
   | EventSubscriptionPeerRemoveAction;
 
-type EventTypingAction = EventTypingStartAction | EventTypingStopAction;
+export type EventTypingAction = EventTypingStartAction | EventTypingStopAction;
 
-type EventUserAction = EventUserAddAction | EventUserRemoveAction | EventUserUpdateAction;
+export type EventUserAction = EventUserAddAction | EventUserRemoveAction | EventUserUpdateAction;
 
-type EventUserGroupAction =
+export type EventUserGroupAction =
   | EventUserGroupAddAction
   | EventUserGroupRemoveAction
   | EventUserGroupUpdateAction
@@ -520,54 +520,54 @@ export type EventAction =
   | {| type: 'ignore' |}
   | {| type: 'unknown', event: {} |};
 
-type SettingsChangeAction = {|
+export type SettingsChangeAction = {|
   type: typeof SETTINGS_CHANGE,
   update: $Shape<SettingsState>,
 |};
 
-type DraftUpdateAction = {|
+export type DraftUpdateAction = {|
   type: typeof DRAFT_UPDATE,
   narrow: Narrow,
   content: string,
 |};
 
-type DoNarrowAction = {|
+export type DoNarrowAction = {|
   type: typeof DO_NARROW,
   narrow: Narrow,
 |};
 
-type PresenceResponseAction = {|
+export type PresenceResponseAction = {|
   type: typeof PRESENCE_RESPONSE,
   presence: PresenceState,
   serverTimestamp: number,
 |};
 
-type MessageSendStartAction = {|
+export type MessageSendStartAction = {|
   type: typeof MESSAGE_SEND_START,
   outbox: Outbox,
 |};
 
-type MessageSendCompleteAction = {|
+export type MessageSendCompleteAction = {|
   type: typeof MESSAGE_SEND_COMPLETE,
   local_message_id: number,
 |};
 
-type DeleteOutboxMessageAction = {|
+export type DeleteOutboxMessageAction = {|
   type: typeof DELETE_OUTBOX_MESSAGE,
   local_message_id: number,
 |};
 
-type ToggleOutboxSendingAction = {|
+export type ToggleOutboxSendingAction = {|
   type: typeof TOGGLE_OUTBOX_SENDING,
   sending: boolean,
 |};
 
-type ClearTypingAction = {|
+export type ClearTypingAction = {|
   type: typeof CLEAR_TYPING,
   outdatedNotifications: string[],
 |};
 
-type InitTopicsAction = {|
+export type InitTopicsAction = {|
   type: typeof INIT_TOPICS,
   topics: Topic[],
   streamId: number,
@@ -577,22 +577,25 @@ type InitTopicsAction = {|
 // The `Action` union type.
 //
 
-type AccountAction =
+export type AccountAction =
   | AccountSwitchAction
   | RealmAddAction
   | AccountRemoveAction
   | LoginSuccessAction
   | LogoutAction;
 
-type LoadingAction = DeadQueueAction | InitialFetchStartAction | InitialFetchCompleteAction;
+export type LoadingAction = DeadQueueAction | InitialFetchStartAction | InitialFetchCompleteAction;
 
-type MessageAction = MessageFetchStartAction | MessageFetchCompleteAction;
+export type MessageAction = MessageFetchStartAction | MessageFetchCompleteAction;
 
-type OutboxAction = MessageSendStartAction | MessageSendCompleteAction | DeleteOutboxMessageAction;
+export type OutboxAction =
+  | MessageSendStartAction
+  | MessageSendCompleteAction
+  | DeleteOutboxMessageAction;
 
-type RealmAction = RealmInitAction | UnackPushTokenAction | AckPushTokenAction;
+export type RealmAction = RealmInitAction | UnackPushTokenAction | AckPushTokenAction;
 
-type SessionAction =
+export type SessionAction =
   | RehydrateAction
   | AppStateAction
   | AppOnlineAction
