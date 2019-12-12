@@ -15,6 +15,11 @@ describe('Heartbeat', () => {
   // arbitrarily, one full hour between heartbeats
   const HEARTBEAT_TIME = 60 * 60 * 1000;
 
+  type HeartbeatEvent = {
+    type: 'activate' | 'deactivate' | 'callback',
+    time: number,
+  };
+
   /**
    * Wrapper class for Heartbeat.
    *
@@ -29,24 +34,35 @@ describe('Heartbeat', () => {
   class JestHeartbeatHelper {
     callback: CallbackType;
     heartbeat: Heartbeat;
+    _events: HeartbeatEvent[] = [];
 
     static _currentHeartbeats: Array<JestHeartbeatHelper> = [];
 
+    _recordEvent(type: 'activate' | 'deactivate' | 'callback') {
+      this._events.push({ type, time: Date.now() });
+    }
+
     constructor() {
-      this.callback = jest.fn();
+      this.callback = jest.fn().mockImplementation(() => this._recordEvent('callback'));
       this.heartbeat = new Heartbeat(this.callback, HEARTBEAT_TIME);
       // eslint-disable-next-line no-underscore-dangle
       JestHeartbeatHelper._currentHeartbeats.push(this);
     }
 
     start() {
+      this._recordEvent('activate');
       this.heartbeat.start();
     }
     stop() {
+      this._recordEvent('deactivate');
       this.heartbeat.stop();
     }
     isActive(): boolean {
       return this.heartbeat.isActive();
+    }
+
+    getEvents(): $ReadOnlyArray<HeartbeatEvent> {
+      return this._events;
     }
 
     static getExtant(): $ReadOnlyArray<JestHeartbeatHelper> {
