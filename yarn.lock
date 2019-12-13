@@ -10410,6 +10410,11 @@ xregexp@2.0.0:
   resolved "https://registry.yarnpkg.com/xregexp/-/xregexp-2.0.0.tgz#52a63e56ca0b84a7f3a5f3d61872f126ad7a5943"
   integrity sha1-UqY+VsoLhKfzpfPWGHLxJq16WUM=
 
+xspans@^1.0.1:
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/xspans/-/xspans-1.0.1.tgz#8573bc2e81d989145fb8f9446fc5fdd1f21ab682"
+  integrity sha512-06d5pkUgRe7Y67JmYeVvuSIWsTZ+gKplqcGTvy8VAfN8szVQqITNF9aIWa4lAaJxt7Vzhom/FaMuNExL/WSBjQ==
+
 xtend@~4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/xtend/-/xtend-4.0.2.tgz#bb72779f5fa465186b1f438f674fa347fdb5db54"
