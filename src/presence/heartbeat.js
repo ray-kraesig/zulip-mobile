@@ -14,6 +14,25 @@
  * user-presence reporting.)
  */
 class Heartbeat {
+  // There are two notable kinds of potential misbehavior for this class:
+  //   1. Calling the callback too often.
+  //   2. Calling the callback too rarely.
+  //
+  // Exactly what "too often" and "too rarely" boil down to is fuzzy; the Zulip
+  // server is necessarily fairly lenient, as it must be robust in the face of
+  // network traffic fluctuations. To nail it down a bit, we assert that
+  // `Heartbeat` satisfies the following properties:
+  //
+  //   α. If the Heartbeat is active, there has always been at least one call
+  //      made to `callback` within the last approximate interval.
+  //   β. Within any approximate interval, there are no more than three calls
+  //      made to `callback`.
+  //   γ. If the Heartbeat is inactive, no calls are made.
+  //
+  // ("approximate interval" covers real-world variation like scheduler delays
+  // and callback execution time. It's a bit fuzzy here, but we define it
+  // precisely in tests.)
+
   _callback: () => void;
   _milliseconds: number;
 

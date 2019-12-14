@@ -1,5 +1,6 @@
 // @flow strict-local
 import { Lolex } from '../../__tests__/auxiliary/lolex';
+import IntervalSet from '../../__tests__/auxiliary/interval-set';
 import Heartbeat from '../heartbeat';
 
 /** Fake clock implementation. See 'auxiliary/lolex' for more details. */
@@ -27,7 +28,7 @@ describe('Heartbeat', () => {
    * "The course of false time never did run smooth." -- Shakespeare, probably
    *
    * Since we're using fake timers, two sequential events can appear to occur
-   * "at the same time". This can confuse simple comparisons terribly.
+   * "at the same time". This can confuse our interval library terribly.
    *
    * We therefore represent an event time as a dual number (a + bε). The real
    * part (a) is the readout of Date.now(), while the infinitesimal part (b) is
@@ -70,6 +71,10 @@ describe('Heartbeat', () => {
       (1)  v1 < v2 ⇒ t1 < t2.
 
         ... _i.e._ that M is a homomorphism at all.
+
+        This is the whole point, of course. The image of this mapping is to be
+        fed into an interval-tree implementation specialized to the reals (or to
+        IEEE floats, anyway), and < must be preserved for that to be meaningful.
 
       (2)  |t1 - t2| ≤ 1 ⟺ Re(v1) = Re(v2).
 
@@ -243,6 +248,102 @@ describe('Heartbeat', () => {
     expect(callback).not.toHaveBeenCalled();
   };
 
+  /**
+   * Helper function. Returns, as an IntervalSet, the periods of time within which
+   * `heartbeat` has been active.
+   */
+  const getActivityIntervals = (heartbeat: JestHeartbeatHelper): IntervalSet => {
+    const events = heartbeat.getEvents();
+
+    let span: IntervalSet = new IntervalSet([]);
+
+    let activityStart: number | null = null;
+    for (const { type, time } of events) {
+      switch (type) {
+        case 'activate':
+          if (activityStart === null) {
+            activityStart = time;
+          }
+          break;
+
+        case 'deactivate':
+          if (activityStart !== null) {
+            span = span.union([[activityStart, time]]);
+            activityStart = null;
+          }
+          break;
+
+        default: /* nothing */
+      }
+    }
+
+    if (activityStart !== null) {
+      // (this is logically coherent, but we never want to do it)
+      /* span = span.union([[activityStart, Infinity]]); */
+      throw new Error('heartbeat is still active!');
+    }
+
+    return span;
+  };
+
+  /**
+   * Helper function. Returns the times when a callback was made to this
+   * Heartbeat.
+   */
+  const getCallbackTimes = (heartbeat: JestHeartbeatHelper): number[] =>
+    heartbeat
+      .getEvents()
+      .filter(({ type }) => type === 'callback')
+      .map(({ time }) => time);
+
+  // "α. If the Heartbeat is active, there has always been at least one call
+  //     made to `callback` within the last approximate interval."
+  const checkPredicateAlpha = (heartbeat: JestHeartbeatHelper) => {
+    const interval: number = HEARTBEAT_TIME;
+
+    // α is always satisfied when the heartbeat is inactive.
+    let satisfied = getActivityIntervals(heartbeat).complement();
+
+    // Regardless of activity, α is also satisfied for every `interval` period
+    // after a callback (plus infinitesimals).
+    for (const time of getCallbackTimes(heartbeat)) {
+      satisfied = satisfied.union([[time, time + interval + 1]]);
+    }
+
+    const isAll = (a: IntervalSet) => a.complement().isEmpty();
+    expect(satisfied).toSatisfy(isAll);
+  };
+
+  // "β. Within any approximate interval, there are no more than three calls
+  //     made to `callback`."
+  const checkPredicateBeta = (heartbeat: JestHeartbeatHelper) => {
+    const callbackTimes = getCallbackTimes(heartbeat);
+    const interval: number = HEARTBEAT_TIME;
+
+    callbackTimes.forEach((timeStart, indexStart) => {
+      // Peek infinitesimally forward. (If there's a callback infinitesimally
+      // *preceding* us, we've already checked it.)
+      const timeEnd = timeStart + interval + 1;
+
+      let indexEnd = indexStart + 1;
+      while (callbackTimes[indexEnd] < timeEnd) {
+        indexEnd++;
+      }
+
+      expect(indexEnd - indexStart).toBeLessThanOrEqual(3);
+    });
+  };
+
+  // "γ. If the Heartbeat is inactive, no calls are made."
+  const checkPredicateGamma = (heartbeat: JestHeartbeatHelper) => {
+    const activity = getActivityIntervals(heartbeat);
+    for (const time of getCallbackTimes(heartbeat)) {
+      // This is an exact predicate, not an approximate one. It must hold even
+      // in the infinitesimal regime.
+      expect(time).toSatisfy(t => activity.containsValue(t));
+    }
+  };
+
   // ===================================================================
   // Jest hooks
 
@@ -283,6 +384,13 @@ describe('Heartbeat', () => {
     // firing.
     for (const heartbeat of heartbeats) {
       expect(heartbeat.callback).not.toHaveBeenCalled();
+    }
+
+    // The global constraints should hold for all test sequences.
+    for (const heartbeat of heartbeats) {
+      checkPredicateAlpha(heartbeat);
+      checkPredicateBeta(heartbeat);
+      checkPredicateGamma(heartbeat);
     }
   });
 
