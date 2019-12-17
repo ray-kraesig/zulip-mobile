@@ -514,4 +514,79 @@ describe('Heartbeat', () => {
 
     heartbeat.stop();
   });
+
+  describe('obeys conditions α, β, γ', () => {
+    /**
+     * Decorator-like function. Forwards to its wrapped function, with all
+     * active heartbeats temporarily stopped.
+     */
+    function callWithHeartsStopped<Args: $ReadOnlyArray<*>, R>(
+      fn: (...args: Args) => R,
+    ): (...args: Args) => R {
+      return (...args) => {
+        const activeHeartbeats = JestHeartbeatHelper.getExtant().filter(hb => hb.isActive());
+        activeHeartbeats.forEach(hb => hb.stop());
+        try {
+          return fn(...args);
+        } finally {
+          activeHeartbeats.forEach(hb => hb.start());
+        }
+      };
+    }
+
+    // Functions to simulate the app being temporarily exited.
+    const delayFunctions: { [string]: (number) => void } = {
+      /* Simulates stopping the app, but letting timers continue to run,
+         potentially awakening it. */
+      soft: callWithHeartsStopped((ms: number) => lolex.advanceTimersByTime(ms)),
+      /* Simulates stopping the app and suspending timers until restarted. */
+      hard: callWithHeartsStopped((ms: number) => lolex.unsafeAdvanceOnlyTime(ms)),
+
+      /* The above is an approximation to what we probably actually want --
+         which is a function that advances the clock, but then immediately runs
+         all the timers that it skipped past in succession. This is possible if
+         one is willing to fiddle around with internal details of Lolex, but not
+         otherwise. */
+
+      // blocking: callWithHeartsStopped(...
+    };
+
+    const delayTimes = {
+      'a moment': 0.02 * HEARTBEAT_TIME,
+      'almost an interval': 0.98 * HEARTBEAT_TIME,
+      'an interval exactly': 1 * HEARTBEAT_TIME,
+      'just over an interval': 1.02 * HEARTBEAT_TIME,
+    };
+
+    function* entries<V>(data: { [string]: V }): Iterable<[string, V]> {
+      for (const key of Object.keys(data)) {
+        yield [key, data[key]];
+      }
+    }
+
+    /* eslint-disable no-loop-func */
+    // (`no-loop-func` is less useful in the presence of `no-var`)
+    for (const [delayFnDesc, delayFn] of entries(delayFunctions)) {
+      describe(`with ${delayFnDesc} delays`, () => {
+        /**/
+        for (const [offDesc, offTime] of entries(delayTimes)) {
+          describe(`when disabling for ${offDesc}`, () => {
+            /**/
+            for (const [waitDesc, waitTime] of entries(delayTimes)) {
+              test(`after waiting for ${waitDesc}`, () => {
+                const { heartbeat } = setup();
+
+                heartbeat.start();
+                lolex.advanceTimersByTime(waitTime);
+                delayFn(offTime);
+                lolex.advanceTimersByTime(HEARTBEAT_TIME);
+                heartbeat.stop();
+              });
+            }
+          });
+        }
+      });
+    }
+    /* eslint-enable no-loop-func */
+  });
 });
