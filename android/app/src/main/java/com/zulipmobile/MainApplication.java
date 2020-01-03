@@ -1,6 +1,7 @@
 package com.zulipmobile;
 
 import android.app.Application;
+
 import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactApplication;
 import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
@@ -19,6 +20,7 @@ import com.reactnativecommunity.webview.RNCWebViewPackage;
 import com.remobile.toast.RCTToastPackage;
 import com.zmxv.RNSound.RNSoundPackage;
 import io.sentry.RNSentryPackage;
+
 import java.util.Arrays;
 import java.util.List;
 
