@@ -1,6 +1,10 @@
 platform :ios, '10.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
+# suppress warnings from (third-party) Pods
+# (override with `:inhibit_warnings => false` if desired)
+inhibit_all_warnings!
+
 target 'ZulipMobile' do
   # Pods for ZulipMobile
   pod 'React', :path => '../node_modules/react-native/'
