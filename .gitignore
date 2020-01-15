@@ -58,6 +58,9 @@ buck-out/
 # Bundle artifact
 *.jsbundle
 
+# CocoaPods
+/ios/Pods/
+
 ### ^
 ### The portion of this file above this line comes from RN upstream's
 ### template.  We leave that part unchanged as much as we can, to help
