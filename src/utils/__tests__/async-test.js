@@ -7,7 +7,12 @@ describe('sleep', () => {
     const start = Date.now();
     await sleep(expectedMs);
     const durationMs = Date.now() - start;
-    expect(expectedMs).toBeLessThanOrEqual(durationMs);
+
+    // Due to https://github.com/nodejs/node/issues/26578, we subtract 1 from
+    // expectedMs here. (This is not hypothetical! `durationMs === 999` has been
+    // witnessed in at least one actual CI run.)
+    expect(expectedMs - 1).toBeLessThanOrEqual(durationMs);
+
     expect(durationMs).toBeLessThan(10 * expectedMs);
   });
 });
