@@ -1,5 +1,5 @@
 /* @flow strict-local */
-import type { UserStatusState, Action } from '../types';
+import type { UserStatus, UserStatusState, Action } from '../types';
 import {
   LOGOUT,
   LOGIN_SUCCESS,
@@ -22,7 +22,7 @@ export default (state: UserStatusState = initialState, action: Action): UserStat
       return action.data.user_status || initialState;
 
     case EVENT_USER_STATUS_UPDATE: {
-      const newUserStatus = { ...state[action.user_id] };
+      const newUserStatus: UserStatus = { ...state[action.user_id] };
       if (action.away !== undefined) {
         if (action.away === true) {
           newUserStatus.away = action.away;

@@ -42,7 +42,7 @@ const fakeBlankState = {
   user_id: 0,
 };
 
-const convertRealmEmoji = (data): RealmEmojiById =>
+const convertRealmEmoji = (data: RealmEmojiById): RealmEmojiById =>
   objectFromEntries(Object.keys(data).map(id => [id, { ...data[id], code: id.toString() }]));
 
 export default (state: RealmState = initialState, action: Action): RealmState => {

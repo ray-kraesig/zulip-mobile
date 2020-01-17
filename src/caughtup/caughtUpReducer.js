@@ -1,5 +1,5 @@
 /* @flow strict-local */
-import type { CaughtUp, CaughtUpState, Action } from '../types';
+import type { CaughtUp, CaughtUpState, Action, MessageFetchCompleteAction } from '../types';
 import {
   REALM_INIT,
   LOGOUT,
@@ -14,7 +14,7 @@ import { DEFAULT_CAUGHTUP } from './caughtUpSelectors';
 const initialState: CaughtUpState = NULL_OBJECT;
 
 /** Try to infer the caught-up state, when the server didn't tell us. */
-const legacyInferCaughtUp = (prevCaughtUp: CaughtUp | void, action) => {
+const legacyInferCaughtUp = (prevCaughtUp: CaughtUp | void, action: MessageFetchCompleteAction) => {
   if (action.anchor === LAST_MESSAGE_ANCHOR) {
     return {
       older: action.numBefore > action.messages.length,
