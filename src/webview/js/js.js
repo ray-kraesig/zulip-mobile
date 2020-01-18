@@ -209,13 +209,11 @@ function midMessagePeer(top: number, bottom: number): ?Element {
   const midY = (bottom + top) / 2;
 
   // Document#elementsFromPoint appears in iOS 10 and Chrome 43.
-  // $FlowFixMe: doesn't know about Document#elementsFromPoint
   if (document.elementsFromPoint === undefined) {
     const element = document.elementFromPoint(0, midY);
     return element && element.closest('body > *');
   }
 
-  // $FlowFixMe: doesn't know about Document#elementsFromPoint
   const midElements: Array<HTMLElement> = document.elementsFromPoint(0, midY);
   if (midElements.length < 3) {
     // Just [body, html].
@@ -575,9 +573,8 @@ const eventUpdateHandlers = {
 };
 
 // See `handleInitialLoad` for how this gets subscribed to events.
-const handleMessageEvent = e => {
+const handleMessageEvent = (e: MessageEvent) => {
   scrollEventsDisabled = true;
-  // $FlowFixMe
   const decodedData = decodeURIComponent(escape(window.atob(e.data)));
   const updateEvents: WebViewUpdateEvent[] = JSON.parse(decodedData);
   updateEvents.forEach((uevent: WebViewUpdateEvent) => {
