@@ -2,24 +2,11 @@ package com.zulipmobile;
 
 import android.app.Application;
 
-import com.RNFetchBlob.RNFetchBlobPackage;
 import com.facebook.react.ReactApplication;
-import com.reactnativecommunity.asyncstorage.AsyncStoragePackage;
-import com.reactnativecommunity.netinfo.NetInfoPackage;
-import io.github.elyx0.reactnativedocumentpicker.DocumentPickerPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
-import com.github.yamill.orientation.OrientationPackage;
-import com.imagepicker.ImagePickerPackage;
-import com.learnium.RNDeviceInfo.RNDeviceInfo;
-import com.nikolaiwarner.RNTextInputReset.RNTextInputResetPackage;
-import com.reactnative.photoview.PhotoViewPackage;
-import com.reactnativecommunity.webview.RNCWebViewPackage;
-import com.remobile.toast.RCTToastPackage;
-import com.zmxv.RNSound.RNSoundPackage;
-import io.sentry.RNSentryPackage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -42,19 +29,6 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.asList(
           new MainReactPackage(),
-            new AsyncStoragePackage(),
-            new NetInfoPackage(),
-            new DocumentPickerPackage(),
-            new RNCWebViewPackage(),
-            new RNTextInputResetPackage(),
-            new ImagePickerPackage(),
-            new OrientationPackage(),
-            new RNSentryPackage(),
-            new PhotoViewPackage(),
-            new RCTToastPackage(),
-            new RNFetchBlobPackage(),
-            new RNSoundPackage(),
-            new RNDeviceInfo(),
             new ZulipNativePackage(),
             new NotificationsPackage()
       );
