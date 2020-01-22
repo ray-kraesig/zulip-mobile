@@ -35,6 +35,7 @@ target 'ZulipMobile' do
 
   pod 'React-ART', :path => '../node_modules/react-native/Libraries/ART'
   pod 'React-RCTCameraRoll', :path => '../node_modules/react-native/Libraries/CameraRoll'
+  pod 'React-RCTPushNotification', :path => '../node_modules/react-native/Libraries/PushNotificationIOS'
 
   use_native_modules!
 end
