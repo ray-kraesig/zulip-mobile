@@ -17,9 +17,7 @@
 		42689E9C23466FF7007540AA /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 42689E9B23466FF7007540AA /* webview */; };
 		97AAE954BCB7BB067E32B8EC /* libPods-ZulipMobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A756DA4A595D336C786ADCB7 /* libPods-ZulipMobileTests.a */; };
 		A148FEFC1E9D8CB900479280 /* zulip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A148FEFB1E9D8CB900479280 /* zulip.mp3 */; };
-		A155C0061DD8E7A800A8B695 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A155BFEC1DD8E54100A8B695 /* libRCTCameraRoll.a */; };
 		CFA67D201EC23BCB0070048E /* UtilManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CFA67D1F1EC23BCB0070048E /* UtilManager.m */; };
-		CFCFE5491F00158500C295CF /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A155BFEC1DD8E54100A8B695 /* libRCTCameraRoll.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,13 +41,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 3D05745F1DE6004600184BB4;
 			remoteInfo = "RCTPushNotification-tvOS";
-		};
-		A155BFEB1DD8E54100A8B695 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A155BFE71DD8E54100A8B695 /* RCTCameraRoll.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 58B5115D1A9E6B3D00147676;
-			remoteInfo = RCTCameraRoll;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -77,7 +68,6 @@
 		6BA188F74C4C4DA2AB96F953 /* Pods-ZulipMobile-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZulipMobile-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-ZulipMobile-tvOSTests/Pods-ZulipMobile-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		759A93BE7B0CAFC342642013 /* Pods-ZulipMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZulipMobile.release.xcconfig"; path = "Target Support Files/Pods-ZulipMobile/Pods-ZulipMobile.release.xcconfig"; sourceTree = "<group>"; };
 		A148FEFB1E9D8CB900479280 /* zulip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = zulip.mp3; sourceTree = "<group>"; };
-		A155BFE71DD8E54100A8B695 /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCameraRoll.xcodeproj; path = "../node_modules/react-native/Libraries/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; };
 		A756DA4A595D336C786ADCB7 /* libPods-ZulipMobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ZulipMobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF01C40F5F13C3AC728190DB /* Pods-ZulipMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZulipMobile.debug.xcconfig"; path = "Target Support Files/Pods-ZulipMobile/Pods-ZulipMobile.debug.xcconfig"; sourceTree = "<group>"; };
 		CF6CFE2C1E7DC55100F687C7 /* Build-Phases */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Build-Phases"; sourceTree = "<group>"; };
@@ -94,7 +84,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				97AAE954BCB7BB067E32B8EC /* libPods-ZulipMobileTests.a in Frameworks */,
-				A155C0061DD8E7A800A8B695 /* libRCTCameraRoll.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -104,7 +93,6 @@
 			files = (
 				14F621CB5C09FAAA8FC34DF2 /* libPods-ZulipMobile.a in Frameworks */,
 				3C289EE01FF361C9002AF37A /* libRCTPushNotification.a in Frameworks */,
-				CFCFE5491F00158500C295CF /* libRCTCameraRoll.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -217,14 +205,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		A155BFE81DD8E54100A8B695 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A155BFEC1DD8E54100A8B695 /* libRCTCameraRoll.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		A1FC272D1F75F05200546415 /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
@@ -325,10 +305,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = A155BFE81DD8E54100A8B695 /* Products */;
-					ProjectRef = A155BFE71DD8E54100A8B695 /* RCTCameraRoll.xcodeproj */;
-				},
-				{
 					ProductGroup = 3C289E871FF3617C002AF37A /* Products */;
 					ProjectRef = 3C289E861FF3617C002AF37A /* RCTPushNotification.xcodeproj */;
 				},
@@ -354,13 +330,6 @@
 			fileType = archive.ar;
 			path = "libRCTPushNotification-tvOS.a";
 			remoteRef = 3C289E9C1FF3617C002AF37A /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A155BFEC1DD8E54100A8B695 /* libRCTCameraRoll.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libRCTCameraRoll.a;
-			remoteRef = A155BFEB1DD8E54100A8B695 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */

@@ -34,6 +34,7 @@ target 'ZulipMobile' do
   end
 
   pod 'React-ART', :path => '../node_modules/react-native/Libraries/ART'
+  pod 'React-RCTCameraRoll', :path => '../node_modules/react-native/Libraries/CameraRoll'
 
   use_native_modules!
 end
