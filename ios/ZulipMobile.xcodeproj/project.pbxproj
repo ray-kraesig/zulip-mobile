@@ -16,7 +16,6 @@
 		3C289EE01FF361C9002AF37A /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C289E9B1FF3617C002AF37A /* libRCTPushNotification.a */; };
 		42689E9C23466FF7007540AA /* webview in Resources */ = {isa = PBXBuildFile; fileRef = 42689E9B23466FF7007540AA /* webview */; };
 		97AAE954BCB7BB067E32B8EC /* libPods-ZulipMobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A756DA4A595D336C786ADCB7 /* libPods-ZulipMobileTests.a */; };
-		A146BE491FDB4C640090EA06 /* libART.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A1E053B61FDB490E002A87B7 /* libART.a */; };
 		A148FEFC1E9D8CB900479280 /* zulip.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = A148FEFB1E9D8CB900479280 /* zulip.mp3 */; };
 		A155C0061DD8E7A800A8B695 /* libRCTCameraRoll.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A155BFEC1DD8E54100A8B695 /* libRCTCameraRoll.a */; };
 		CFA67D201EC23BCB0070048E /* UtilManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CFA67D1F1EC23BCB0070048E /* UtilManager.m */; };
@@ -52,20 +51,6 @@
 			remoteGlobalIDString = 58B5115D1A9E6B3D00147676;
 			remoteInfo = RCTCameraRoll;
 		};
-		A1E053B51FDB490E002A87B7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A1E053B01FDB490D002A87B7 /* ART.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 0CF68AC11AF0540F00FF9E5C;
-			remoteInfo = ART;
-		};
-		A1E053B71FDB490E002A87B7 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = A1E053B01FDB490D002A87B7 /* ART.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 323A12871E5F266B004975B8;
-			remoteInfo = "ART-tvOS";
-		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -93,7 +78,6 @@
 		759A93BE7B0CAFC342642013 /* Pods-ZulipMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZulipMobile.release.xcconfig"; path = "Target Support Files/Pods-ZulipMobile/Pods-ZulipMobile.release.xcconfig"; sourceTree = "<group>"; };
 		A148FEFB1E9D8CB900479280 /* zulip.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = zulip.mp3; sourceTree = "<group>"; };
 		A155BFE71DD8E54100A8B695 /* RCTCameraRoll.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTCameraRoll.xcodeproj; path = "../node_modules/react-native/Libraries/CameraRoll/RCTCameraRoll.xcodeproj"; sourceTree = "<group>"; };
-		A1E053B01FDB490D002A87B7 /* ART.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = ART.xcodeproj; path = "../node_modules/react-native/Libraries/ART/ART.xcodeproj"; sourceTree = "<group>"; };
 		A756DA4A595D336C786ADCB7 /* libPods-ZulipMobileTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ZulipMobileTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF01C40F5F13C3AC728190DB /* Pods-ZulipMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ZulipMobile.debug.xcconfig"; path = "Target Support Files/Pods-ZulipMobile/Pods-ZulipMobile.debug.xcconfig"; sourceTree = "<group>"; };
 		CF6CFE2C1E7DC55100F687C7 /* Build-Phases */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "Build-Phases"; sourceTree = "<group>"; };
@@ -120,7 +104,6 @@
 			files = (
 				14F621CB5C09FAAA8FC34DF2 /* libPods-ZulipMobile.a in Frameworks */,
 				3C289EE01FF361C9002AF37A /* libRCTPushNotification.a in Frameworks */,
-				A146BE491FDB4C640090EA06 /* libART.a in Frameworks */,
 				CFCFE5491F00158500C295CF /* libRCTCameraRoll.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -202,7 +185,6 @@
 			isa = PBXGroup;
 			children = (
 				3C289E861FF3617C002AF37A /* RCTPushNotification.xcodeproj */,
-				A1E053B01FDB490D002A87B7 /* ART.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -239,15 +221,6 @@
 			isa = PBXGroup;
 			children = (
 				A155BFEC1DD8E54100A8B695 /* libRCTCameraRoll.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
-		A1E053B11FDB490D002A87B7 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				A1E053B61FDB490E002A87B7 /* libART.a */,
-				A1E053B81FDB490E002A87B7 /* libART-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -352,10 +325,6 @@
 			projectDirPath = "";
 			projectReferences = (
 				{
-					ProductGroup = A1E053B11FDB490D002A87B7 /* Products */;
-					ProjectRef = A1E053B01FDB490D002A87B7 /* ART.xcodeproj */;
-				},
-				{
 					ProductGroup = A155BFE81DD8E54100A8B695 /* Products */;
 					ProjectRef = A155BFE71DD8E54100A8B695 /* RCTCameraRoll.xcodeproj */;
 				},
@@ -392,20 +361,6 @@
 			fileType = archive.ar;
 			path = libRCTCameraRoll.a;
 			remoteRef = A155BFEB1DD8E54100A8B695 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A1E053B61FDB490E002A87B7 /* libART.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libART.a;
-			remoteRef = A1E053B51FDB490E002A87B7 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		A1E053B81FDB490E002A87B7 /* libART-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libART-tvOS.a";
-			remoteRef = A1E053B71FDB490E002A87B7 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 /* End PBXReferenceProxy section */
