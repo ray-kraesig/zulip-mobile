@@ -7,7 +7,7 @@ import * as logging from '../utils/logging';
 import type { Dispatch, GetState, Outbox, Selector, Auth } from '../types';
 import { getAuth, tryGetAuth } from '../account/accountsSelectors';
 
-import { BackoffMachine } from '../utils/async';
+import { BackoffMachine, sleep } from '../utils/async';
 import { isPrivateOrGroupNarrow } from '../utils/narrow';
 
 import { type OutboxStatus } from './outboxTypes';
@@ -87,6 +87,33 @@ const trySendingMessageOnce = async (
   // XXX is this still useful?
   const updateStatus = (status: OutboxStatus) =>
     dispatch(updateOutboxMessageStatus(message.id, status));
+
+  // XXX only for testing and debugging
+  if (message.content.toLowerCase().includes('terminal error')) {
+    await updateStatus({
+      type: 'terminal',
+      subtype: 'misc',
+      message: 'This would be an error message.',
+    });
+    return;
+  }
+
+  // XXX only for testing and debugging
+  if (message.content.toLowerCase().includes('transient error')) {
+    // Pretend to try to send...
+    await sleep(1000);
+    // ... then leave enqueued, with a mock failure.
+    await updateStatus({
+      type: 'transient',
+      subtype: 'enqueued',
+      failure: {
+        httpStatus: 503,
+        apiCode: 'OUT_OF_CHEESE_ERROR',
+        text: '++ Redo from start ++',
+      },
+    });
+    return;
+  }
 
   try {
     // Attempt the sending.
