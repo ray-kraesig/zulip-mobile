@@ -12,11 +12,13 @@ import type {
   User,
   Action,
 } from '../types';
+import type { OutboxStatus } from './outboxTypes';
 import {
   MESSAGE_SEND_START,
   TOGGLE_OUTBOX_SENDING,
   DELETE_OUTBOX_MESSAGE,
   MESSAGE_SEND_COMPLETE,
+  UPDATE_OUTBOX_MESSAGE_STATUS,
 } from '../actionConstants';
 import { getAuth } from '../selectors';
 import * as api from '../api';
@@ -39,6 +41,15 @@ export const toggleOutboxSending = (sending: boolean): Action => ({
 export const deleteOutboxMessage = (localMessageId: number): Action => ({
   type: DELETE_OUTBOX_MESSAGE,
   local_message_id: localMessageId,
+});
+
+export const updateOutboxMessageStatus = (
+  localMessageId: number,
+  status: OutboxStatus,
+): Action => ({
+  type: UPDATE_OUTBOX_MESSAGE_STATUS,
+  local_message_id: localMessageId,
+  status,
 });
 
 export const messageSendComplete = (localMessageId: number): Action => ({

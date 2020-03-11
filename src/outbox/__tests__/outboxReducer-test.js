@@ -1,6 +1,7 @@
 // @flow strict-local
 import deepFreeze from 'deep-freeze';
 
+import type { OutboxStatus } from '../outboxTypes';
 import outboxReducer from '../outboxReducer';
 import { INITIAL_FETCH_COMPLETE, MESSAGE_SEND_START } from '../../actionConstants';
 
@@ -109,6 +110,51 @@ describe('outboxReducer', () => {
 
       const actualState = outboxReducer(initialState, action);
       expect(actualState).toBe(initialState);
+    });
+  });
+
+  describe('UPDATE_OUTBOX_MESSAGE_STATUS', () => {
+    const unsentStatus: OutboxStatus = {
+      type: 'transient',
+      subtype: 'enqueued',
+      failure: null,
+    };
+
+    const clientErrorStatus: OutboxStatus = {
+      type: 'terminal',
+      subtype: 'client error',
+      failure: {
+        httpStatus: 418,
+        apiCode: 'OUT_OF_CHEESE_ERROR',
+        text: 'redo from start',
+      },
+    };
+
+    test('status of the relevant message is changed', () => {
+      const message0 = makeOutboxMessage({ timestamp: 546 });
+      const message1 = makeOutboxMessage({ timestamp: 547, status: unsentStatus });
+      const message2 = makeOutboxMessage({ timestamp: 548 });
+      const message3 = makeOutboxMessage({ timestamp: 549 });
+
+      const initialState = deepFreeze([message0, message1, message2, message3]);
+      const action = {
+        type: 'UPDATE_OUTBOX_MESSAGE_STATUS',
+        local_message_id: 547,
+        status: clientErrorStatus,
+      };
+
+      const actualState = outboxReducer(initialState, action);
+
+      // Everything but the status of the relevant message is untouched...
+      expect(actualState).toEqual([
+        message0,
+        { ...message1, status: expect.anything() },
+        message2,
+        message3,
+      ]);
+
+      // ... and the status is what was specified in the action.
+      expect(actualState[1].status).toEqual(action.status);
     });
   });
 });

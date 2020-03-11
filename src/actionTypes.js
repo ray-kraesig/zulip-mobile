@@ -58,6 +58,7 @@ import {
   EVENT_SUBMESSAGE,
   EVENT_SUBSCRIPTION,
   EVENT,
+  UPDATE_OUTBOX_MESSAGE_STATUS,
 } from './actionConstants';
 
 import type { MessageEvent, PresenceEvent, StreamEvent, SubmessageEvent } from './api/eventTypes';
@@ -87,6 +88,7 @@ import type {
   UserStatusEvent,
 } from './types';
 import type { ZulipVersion } from './utils/zulipVersion';
+import type { OutboxStatus } from './outbox/outboxTypes';
 
 export type { NavigationAction } from 'react-navigation';
 
@@ -554,6 +556,12 @@ type DeleteOutboxMessageAction = {|
   local_message_id: number,
 |};
 
+type UpdateOutboxMessageStatusAction = {|
+  type: typeof UPDATE_OUTBOX_MESSAGE_STATUS,
+  local_message_id: number,
+  status: OutboxStatus,
+|};
+
 type ToggleOutboxSendingAction = {|
   type: typeof TOGGLE_OUTBOX_SENDING,
   sending: boolean,
@@ -585,7 +593,11 @@ type LoadingAction = DeadQueueAction | InitialFetchStartAction | InitialFetchCom
 
 type MessageAction = MessageFetchStartAction | MessageFetchCompleteAction;
 
-type OutboxAction = MessageSendStartAction | MessageSendCompleteAction | DeleteOutboxMessageAction;
+type OutboxAction =
+  | MessageSendStartAction
+  | MessageSendCompleteAction
+  | DeleteOutboxMessageAction
+  | UpdateOutboxMessageStatusAction;
 
 type RealmAction = RealmInitAction | UnackPushTokenAction | AckPushTokenAction;
 

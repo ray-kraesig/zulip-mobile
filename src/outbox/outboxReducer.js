@@ -7,6 +7,7 @@ import {
   LOGOUT,
   ACCOUNT_SWITCH,
   DELETE_OUTBOX_MESSAGE,
+  UPDATE_OUTBOX_MESSAGE_STATUS,
   MESSAGE_SEND_COMPLETE,
 } from '../actionConstants';
 import { NULL_ARRAY } from '../nullObjects';
@@ -38,6 +39,11 @@ export default (state: OutboxState = initialState, action: Action): OutboxState 
     case DELETE_OUTBOX_MESSAGE:
     case EVENT_NEW_MESSAGE:
       return filterArray(state, item => item && item.timestamp !== +action.local_message_id);
+
+    case UPDATE_OUTBOX_MESSAGE_STATUS:
+      return state.map(item =>
+        item.id !== action.local_message_id ? item : { ...item, status: action.status },
+      );
 
     case ACCOUNT_SWITCH:
     case LOGOUT:
