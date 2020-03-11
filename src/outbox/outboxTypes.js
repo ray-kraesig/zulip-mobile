@@ -277,7 +277,7 @@ export type Outbox = {|
    * until we can replace it with a `Message` object.
    */
   isSent: boolean,
-  status?: OutboxStatus,
+  status: OutboxStatus,
 
   // These fields don't exist in `Message`.
   // They're used for sending the message to the server.

@@ -163,6 +163,23 @@ const migrations: { [string]: (GlobalState) => GlobalState } = {
         typeof a.zulipVersion === 'string' ? new ZulipVersion(a.zulipVersion) : a.zulipVersion,
     })),
   }),
+
+  // Synthesize new message-status structures from old `isSent` boolean. (Note
+  // that any sent messages are going to be dropped on INITIAL_FETCH_COMPLETE
+  // anyway.)
+  '0xxxx': state => {
+    const unsent = Object.freeze({
+      type: 'transient',
+      subtype: 'enqueued',
+      failure: null,
+    });
+    const sent = Object.freeze({
+      type: 'transient',
+      subtype: 'sent',
+    });
+    const outbox = state.outbox.map(item => ({ ...item, status: item.isSent ? sent : unsent }));
+    return { ...state, outbox };
+  },
 };
 
 /**

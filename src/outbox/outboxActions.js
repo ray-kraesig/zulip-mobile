@@ -177,6 +177,11 @@ export const addToOutbox = (narrow: Narrow, content: string) => async (
     messageSendStart({
       narrow,
       isSent: false,
+      status: {
+        type: 'transient',
+        subtype: 'enqueued',
+        failure: null,
+      },
       ...extractTypeToAndSubjectFromNarrow(narrow, getUsersByEmail(state), userDetail),
       markdownContent: content,
       content: getContentPreview(content, state),

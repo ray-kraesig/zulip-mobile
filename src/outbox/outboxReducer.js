@@ -52,7 +52,16 @@ export default (state: OutboxState = initialState, action: Action): OutboxState 
 
     case MESSAGE_SEND_COMPLETE:
       return state.map(item =>
-        item.id !== action.local_message_id ? item : { ...item, isSent: true },
+        item.id !== action.local_message_id
+          ? item
+          : {
+              ...item,
+              isSent: true,
+              status: {
+                type: 'transient',
+                subtype: 'sent',
+              },
+            },
       );
 
     case DELETE_OUTBOX_MESSAGE:
