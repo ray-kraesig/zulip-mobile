@@ -56,15 +56,28 @@ const messageReactionListAsHtml = (
   return template`<div class="reaction-list">$!${htmlList.join('')}</div>`;
 };
 
+const statusDisplay = (message: Message | Outbox): string => {
+  if (!message.isOutbox) {
+    return '';
+  }
+
+  const { status } = message;
+  if (status.type === 'transient') {
+    return '<div class="loading-spinner outbox-spinner"></div>';
+  } else {
+    return '<div class="outbox-error">&#x274c;</div>';
+  }
+};
+
 const messageBody = (
   { alertWords, flags, ownUser, allImageEmojiById }: BackgroundData,
   message: Message | Outbox,
 ) => {
-  const { id, isOutbox, last_edit_timestamp, match_content, reactions } = (message: MessageLike);
+  const { id, last_edit_timestamp, match_content, reactions } = (message: MessageLike);
   const content = match_content ?? message.content;
   return template`
 $!${processAlertWords(content, id, alertWords, flags)}
-$!${isOutbox ? '<div class="loading-spinner outbox-spinner"></div>' : ''}
+$!${statusDisplay(message)}
 $!${messageTagsAsHtml(!!flags.starred[id], last_edit_timestamp)}
 $!${messageReactionListAsHtml(reactions, ownUser.user_id, allImageEmojiById)}
 `;
@@ -83,15 +96,18 @@ export const flagsStateToStringList = (flags: FlagsState, id: number): string[] 
 
 export default (backgroundData: BackgroundData, message: Message | Outbox, isBrief: boolean) => {
   const { id, timestamp } = message;
+  const errorState: 'OK' | 'terminal' | 'transient' = message.isOutbox ? message.status.type : 'OK';
   const flagStrings = flagsStateToStringList(backgroundData.flags, id);
   const divOpenHtml = template`
-    <div
-     class="message ${isBrief ? 'message-brief' : 'message-full'}"
+    <div class="message ${isBrief ? 'message-brief' : 'message-full'}
+    ${errorState === 'terminal' ? 'message-error' : ''}"
      id="msg-${id}"
      data-msg-id="${id}"
      $!${flagStrings.map(flag => template`data-${flag}="true" `).join('')}
     >`;
   const messageTime = shortTime(new Date(timestamp * 1000), backgroundData.twentyFourHourTime);
+
+  const contentClasses: string = 'content';
 
   const timestampHtml = (showOnRender: boolean) => template`
 <div class="time-container">
@@ -108,7 +124,7 @@ export default (backgroundData: BackgroundData, message: Message | Outbox, isBri
   if (isBrief) {
     return template`
 $!${divOpenHtml}
-  <div class="content">
+  <div class="${contentClasses}">
     $!${timestampHtml(false)}
     $!${bodyHtml}
   </div>
@@ -133,7 +149,7 @@ $!${divOpenHtml}
   <div class="avatar">
     <img src="${avatarUrl}" alt="${sender_full_name}" class="avatar-img" data-sender-id="${sender_id}">
   </div>
-  <div class="content">
+  <div class="${contentClasses}">
     $!${subheaderHtml}
     $!${bodyHtml}
   </div>
