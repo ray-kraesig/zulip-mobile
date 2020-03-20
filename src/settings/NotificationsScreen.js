@@ -8,6 +8,7 @@ import { getAuth, getSettings } from '../selectors';
 import { OptionRow, Screen } from '../common';
 import * as api from '../api';
 import { settingsChange } from '../actions';
+import NothingSwitch from '../common/NothingSwitch';
 
 type Props = $ReadOnly<{|
   auth: Auth,
@@ -53,6 +54,7 @@ class NotificationsScreen extends PureComponent<Props> {
 
     return (
       <Screen title="Notifications">
+        <NothingSwitch name="NotificationsScreen" />
         <OptionRow
           label="Notifications when offline"
           value={offlineNotification}

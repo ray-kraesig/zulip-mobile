@@ -22,6 +22,7 @@ import {
   navigateToDiagnostics,
   navigateToLegal,
 } from '../actions';
+import NothingSwitch from '../common/NothingSwitch';
 
 const styles = StyleSheet.create({
   optionWrapper: {
@@ -46,6 +47,7 @@ class SettingsCard extends PureComponent<Props> {
     return (
       <ScrollView style={styles.optionWrapper}>
         <ModalNavBar canGoBack={false} title="Settings" />
+        <NothingSwitch name="SettingsCard" />
         <OptionRow
           Icon={IconNight}
           label="Night mode"

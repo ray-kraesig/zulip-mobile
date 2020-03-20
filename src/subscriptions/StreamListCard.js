@@ -12,6 +12,7 @@ import { streamNarrow } from '../utils/narrow';
 import StreamList from '../streams/StreamList';
 import { getAuth, getCanCreateStreams, getStreams, getSubscriptions } from '../selectors';
 import { doNarrow, navigateToCreateStream } from '../actions';
+import NothingSwitch from '../common/NothingSwitch';
 
 const styles = StyleSheet.create({
   wrapper: {
@@ -68,6 +69,7 @@ class StreamListCard extends PureComponent<Props> {
             }
           />
         )}
+        <NothingSwitch name="StreamListCard" />
         <StreamList
           streams={subsAndStreams}
           showSwitch
