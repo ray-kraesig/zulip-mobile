@@ -1,5 +1,6 @@
 /* @flow strict-local */
 import type { OutboxState, Action, Outbox } from '../types';
+import type { OutboxStatus } from './outboxTypes';
 import {
   INITIAL_FETCH_COMPLETE,
   MESSAGE_SEND_START,
@@ -22,6 +23,55 @@ const messageSendStart = (state, action) => {
     return state;
   }
   return [...state, { ...action.outbox }];
+};
+
+const eventNewMessage = (state, action): OutboxState => {
+  const { local_message_id } = action;
+  if (local_message_id === undefined) {
+    return state;
+  }
+
+  // `action` has a whole Message in it; we probably don't want to send all of
+  // that off to Sentry.
+  const getReportData = () => ({
+    id: action.id,
+    timestamp: action.message.timestamp,
+  });
+
+  const index = state.findIndex(item => item.timestamp === local_message_id);
+  if (index === -1) {
+    logging.error('EVENT_NEW_MESSAGE: unrecognized local_message_id', {
+      local_message_id,
+      data: getReportData(),
+    });
+    return state;
+  }
+
+  const item: Outbox = state[index];
+  if (item.status.type !== 'sent') {
+    logging.error('EVENT_NEW_MESSAGE: outbox message is in unexpected state', {
+      item,
+      data: getReportData(),
+    });
+
+    // clearly something's gone wrong; indicate that
+    const newStatus: OutboxStatus = {
+      type: 'terminal',
+      subtype: 'misc',
+      // XXX TODO: decide on better wording here
+      message: 'EVENT_NEW_MESSAGE while in unexpected state',
+    };
+    return [
+      ...state.slice(0, index),
+      {
+        ...item,
+        status: newStatus,
+      },
+      ...state.slice(index + 1),
+    ];
+  }
+
+  return [...state.slice(0, index), ...state.slice(index + 1)];
 };
 
 const updateOutboxMessageStatus = (state, action) => {
@@ -64,8 +114,10 @@ export default (state: OutboxState = initialState, action: Action): OutboxState 
             },
       );
 
-    case DELETE_OUTBOX_MESSAGE:
     case EVENT_NEW_MESSAGE:
+      return eventNewMessage(state, action);
+
+    case DELETE_OUTBOX_MESSAGE:
       return filterArray(state, item => item && item.timestamp !== +action.local_message_id);
 
     case UPDATE_OUTBOX_MESSAGE_STATUS:
