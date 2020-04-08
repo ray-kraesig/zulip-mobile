@@ -185,6 +185,40 @@ android {
             }
         }
     }
+
+
+    File fh = new File("SEQUENCE-OF-DIFFS.TXT")
+    fh.write "";
+    "rm DIFFLEFT.TXT".execute()
+    String watchPath = "${buildDir}/intermediates/merged_assets/debug/out/"
+    String lsCommand = "ls -lRai ${watchPath}"
+    TaskExecutionAdapter tea = new TaskExecutionAdapter() {
+        @Override
+        void afterExecute(Task task, TaskState state) {
+            String diffText = "(none)"
+            File fhL = new File("DIFFLEFT.TXT")
+            if (fhL.exists()) {
+                L:{
+                    File fhR = new File("DIFFRIGHT.TXT")
+                    fhR.write lsCommand.execute().text
+                }
+                diffText = "diff DIFFLEFT.TXT DIFFRIGHT.TXT".execute().text
+                "mv DIFFRIGHT.TXT DIFFLEFT.TXT".execute().text // blocking
+            } else {
+                diffText = lsCommand.execute().text
+                fhL.write diffText
+            }
+
+            if (diffText.length() == 0) return;
+
+            fh.append("========================================\n");
+            fh.append("Executed task [${task.project.path}:${task.name}]; diffing watched path...\n");
+            fh.append(diffText);
+            fh.append("========================================\n");
+            fh.append("\n");
+        }
+    }
+    gradle.taskGraph.addTaskExecutionListener(tea)
 }
 
 repositories {
