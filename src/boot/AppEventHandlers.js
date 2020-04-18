@@ -17,6 +17,7 @@ import {
 } from '../notification';
 import { appOnline, appOrientation, initSafeAreaInsets } from '../actions';
 import PresenceHeartbeat from '../presence/PresenceHeartbeat';
+import OutboxDecayTimer from '../outbox/OutboxDecayTimer';
 
 /**
  * Part of the interface from react-native-netinfo.
@@ -133,6 +134,7 @@ class AppEventHandlers extends PureComponent<Props> {
   render() {
     return (
       <>
+        <OutboxDecayTimer />
         <PresenceHeartbeat />
         <View style={styles.wrapper}>{this.props.children}</View>
       </>
