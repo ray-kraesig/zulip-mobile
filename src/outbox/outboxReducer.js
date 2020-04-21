@@ -12,6 +12,7 @@ import {
 } from '../actionConstants';
 import { NULL_ARRAY } from '../nullObjects';
 import { filterArray } from '../utils/immutability';
+import * as logging from '../utils/logging';
 
 const initialState = NULL_ARRAY;
 
@@ -21,6 +22,24 @@ const messageSendStart = (state, action) => {
     return state;
   }
   return [...state, { ...action.outbox }];
+};
+
+const updateOutboxMessageStatus = (state, action) => {
+  const index = state.findIndex(s => s.timestamp === action.local_message_id);
+  if (index === -1) {
+    return state;
+  }
+
+  const item = state[index];
+  if (item.status.type === 'terminal') {
+    logging.error('Attempted to transition outbox message away from terminal state', {
+      item,
+      newStatus: action.status,
+    });
+    return state;
+  }
+
+  return [...state.slice(0, index), { ...item, status: action.status }, ...state.slice(index + 1)];
 };
 
 export default (state: OutboxState = initialState, action: Action): OutboxState => {
@@ -41,9 +60,7 @@ export default (state: OutboxState = initialState, action: Action): OutboxState 
       return filterArray(state, item => item && item.timestamp !== +action.local_message_id);
 
     case UPDATE_OUTBOX_MESSAGE_STATUS:
-      return state.map(item =>
-        item.id !== action.local_message_id ? item : { ...item, status: action.status },
-      );
+      return updateOutboxMessageStatus(state, action);
 
     case ACCOUNT_SWITCH:
     case LOGOUT:
