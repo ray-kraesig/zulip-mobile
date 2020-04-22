@@ -40,7 +40,7 @@ const eventNewMessage = (state, action): OutboxState => {
 
   const index = state.findIndex(item => item.timestamp === local_message_id);
   if (index === -1) {
-    logging.error('EVENT_NEW_MESSAGE: unrecognized local_message_id', {
+    logging.warn('EVENT_NEW_MESSAGE: unrecognized local_message_id', {
       local_message_id,
       data: getReportData(),
     });
@@ -48,7 +48,7 @@ const eventNewMessage = (state, action): OutboxState => {
   }
 
   const item: Outbox = state[index];
-  if (item.status.type !== 'sent') {
+  if (item.status.subtype !== 'sent') {
     logging.error('EVENT_NEW_MESSAGE: outbox message is in unexpected state', {
       item,
       data: getReportData(),

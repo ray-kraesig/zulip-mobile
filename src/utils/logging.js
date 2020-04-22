@@ -134,7 +134,7 @@ const makeLogFunction = ({ consoleMethod, severity }: LogParams): LogFunction =>
  *  * `logging.warn` for logging at lower severity
  */
 export const error: (event: string | Error, extras?: Extras) => void = makeLogFunction({
-  consoleMethod: console.error,
+  consoleMethod: (...args) => console.error(...args),
   severity: Severity.Error,
 });
 
@@ -158,6 +158,6 @@ export const error: (event: string | Error, extras?: Extras) => void = makeLogFu
  *  * `logging.error` for logging at higher severity
  */
 export const warn: (event: string | Error, extras?: Extras) => void = makeLogFunction({
-  consoleMethod: console.warn,
+  consoleMethod: (...args) => console.warn(...args),
   severity: Severity.Warning,
 });

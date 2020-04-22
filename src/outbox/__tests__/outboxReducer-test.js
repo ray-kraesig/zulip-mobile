@@ -7,6 +7,51 @@ import { INITIAL_FETCH_COMPLETE, MESSAGE_SEND_START } from '../../actionConstant
 
 import * as eg from '../../__tests__/lib/exampleData';
 
+const unsentStatus: OutboxStatus = {
+  type: 'transient',
+  subtype: 'enqueued',
+  failure: null,
+};
+
+const sentStatus: OutboxStatus = {
+  type: 'transient',
+  subtype: 'sent',
+};
+
+const clientErrorStatus: OutboxStatus = {
+  type: 'terminal',
+  subtype: 'client error',
+  failure: {
+    httpStatus: 418,
+    apiCode: 'OUT_OF_CHEESE_ERROR',
+    text: 'redo from start',
+  },
+};
+
+const miscErrorStatus: OutboxStatus = {
+  type: 'terminal',
+  subtype: 'misc',
+  message: 'As Gregor Samsa awoke one morning from uneasy dreams, he found',
+};
+
+/**
+ * Silence (but confirm the presence of) expected console output.
+ */
+// The strange declaration here is because VSCode's syntax highlighter goes
+// off the rails when given an arrow function with a generic signature.
+const expectingConsole = function expectingConsole_<T>(
+  which: 'log' | 'info' | 'warn' | 'error',
+  f: () => T,
+): T {
+  const spy = jest.spyOn(global.console, which).mockImplementation(() => {});
+  try {
+    return f();
+  } finally {
+    expect(spy).toHaveBeenCalled();
+    spy.mockRestore();
+  }
+};
+
 describe('outboxReducer', () => {
   describe('INITIAL_FETCH_COMPLETE', () => {
     test('filters out isSent', () => {
@@ -78,7 +123,7 @@ describe('outboxReducer', () => {
     });
 
     test('remove message if local_message_id matches', () => {
-      const message1 = eg.makeOutboxMessage({ timestamp: 546 });
+      const message1 = eg.makeOutboxMessage({ timestamp: 546, status: sentStatus });
       const message2 = eg.makeOutboxMessage({ timestamp: 150238512430 });
       const message3 = eg.makeOutboxMessage({ timestamp: 150238594540 });
       const initialState = deepFreeze([message1, message2, message3]);
@@ -93,6 +138,7 @@ describe('outboxReducer', () => {
 
       const actualState = outboxReducer(initialState, action);
 
+      expect(actualState.length).toEqual(expectedState.length);
       expect(actualState).toEqual(expectedState);
     });
 
@@ -108,35 +154,20 @@ describe('outboxReducer', () => {
         local_message_id: 15023859,
       });
 
-      const actualState = outboxReducer(initialState, action);
+      const actualState = expectingConsole('warn', () => outboxReducer(initialState, action));
       expect(actualState).toBe(initialState);
     });
   });
 
   describe('UPDATE_OUTBOX_MESSAGE_STATUS', () => {
-    const unsentStatus: OutboxStatus = {
-      type: 'transient',
-      subtype: 'enqueued',
-      failure: null,
-    };
-
-    const clientErrorStatus: OutboxStatus = {
-      type: 'terminal',
-      subtype: 'client error',
-      failure: {
-        httpStatus: 418,
-        apiCode: 'OUT_OF_CHEESE_ERROR',
-        text: 'redo from start',
-      },
-    };
-
     test('status of the relevant message is changed', () => {
-      const message0 = makeOutboxMessage({ timestamp: 546 });
-      const message1 = makeOutboxMessage({ timestamp: 547, status: unsentStatus });
-      const message2 = makeOutboxMessage({ timestamp: 548 });
-      const message3 = makeOutboxMessage({ timestamp: 549 });
+      const message0 = eg.makeOutboxMessage({ timestamp: 546 });
+      const message1 = eg.makeOutboxMessage({ timestamp: 547, status: unsentStatus });
+      const message2 = eg.makeOutboxMessage({ timestamp: 548 });
+      const message3 = eg.makeOutboxMessage({ timestamp: 549 });
 
       const initialState = deepFreeze([message0, message1, message2, message3]);
+
       const action = {
         type: 'UPDATE_OUTBOX_MESSAGE_STATUS',
         local_message_id: 547,
