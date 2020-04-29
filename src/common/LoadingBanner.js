@@ -5,7 +5,7 @@ import { StyleSheet, View } from 'react-native';
 
 import type { Dispatch } from '../types';
 import { connect } from '../react-redux';
-import { getLoading } from '../selectors';
+import { getLoading, getThemeColors } from '../selectors';
 import { Label, LoadingIndicator } from '.';
 import type { ThemeColors } from '../styles';
 import { ThemeContext } from '../styles';
@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
 
 type SelectorProps = $ReadOnly<{|
   loading: boolean,
+  themeColors: ThemeColors,
 |}>;
 
 type Props = $ReadOnly<{|
@@ -39,9 +40,6 @@ type Props = $ReadOnly<{|
  * Display a notice that the app is connecting to the server, when appropriate.
  */
 class LoadingBanner extends PureComponent<Props> {
-  static contextType = ThemeContext;
-  context: ThemeColors;
-
   render() {
     if (!this.props.loading) {
       return <View key={key} style={styles.none} />;
@@ -78,4 +76,5 @@ class LoadingBanner extends PureComponent<Props> {
 
 export default connect<SelectorProps, _, _>(state => ({
   loading: getLoading(state),
+  themeColors: getThemeColors(state),
 }))(LoadingBanner);

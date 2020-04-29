@@ -8,6 +8,7 @@ export * from './directSelectors';
 export * from './emoji/emojiSelectors';
 export * from './message/messageSelectors';
 export * from './nav/navSelectors';
+export * from './styles/stylesSelectors';
 export * from './subscriptions/subscriptionSelectors';
 export * from './title/titleSelectors';
 export * from './topics/topicSelectors';
