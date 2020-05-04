@@ -78,14 +78,7 @@ export type Outbox = {|
  *   `Message | Outbox`, and cast them to `MessageLike` at their use-site when
  *   necessary.
  *
- * * Note 2: This class is asymmetric mostly because there is no current use case
- *   for accessing Outbox-only fields on a `Message | Outbox`.
- *
  */
 export type MessageLike =
-  | $ReadOnly<Message>
-  | $ReadOnly<{
-      // $Shape<T> is unsound, per Flow docs, but $ReadOnly<$Shape<T>> is not
-      ...$Shape<{ [$Keys<Message>]: void }>,
-      ...Outbox,
-    }>;
+  | $ReadOnly<{ ...{| [$Keys<Outbox>]: void |}, ...$Exact<Message> }>
+  | $ReadOnly<{ ...{| [$Keys<$Exact<Message>>]: void |}, ...Outbox }>;
