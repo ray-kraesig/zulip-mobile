@@ -3,7 +3,8 @@ import format from 'date-fns/format';
 import isToday from 'date-fns/is_today';
 import isYesterday from 'date-fns/is_yesterday';
 import isSameYear from 'date-fns/is_same_year';
-import tz from 'timezone/loaded';
+
+import moment from 'moment-timezone/builds/moment-timezone-with-data';
 
 export { default as isSameDay } from 'date-fns/is_same_day';
 
@@ -27,4 +28,9 @@ export const humanDate = (date: Date): string => {
   return isSameYear(new Date(date), new Date()) ? shortDate(date) : longDate(date);
 };
 
-export const nowInTimeZone = (timezone: string): string => tz(tz(new Date()), '%I:%M %p', timezone);
+export const nowInTimeZone = (timezone: string): number | null => {
+  if (!moment.tz.zone(timezone)) {
+    return null;
+  }
+  return moment.tz(new Date(), timezone).unix();
+};

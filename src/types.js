@@ -239,7 +239,7 @@ export type MessageLike =
       ...Outbox,
     }>;
 
-export type LocalizableText = string | { text: string, values?: { [string]: string } };
+export type LocalizableText = string | { text: string, values?: { [string]: string | number } };
 
 /**
  * Usually called `_`, and invoked like `_('Message')` -> `'Nachricht'`.

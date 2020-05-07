@@ -2,9 +2,9 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import type { UserOrBot, Dispatch } from '../types';
+import type { UserOrBot, Dispatch, LocalizableText } from '../types';
 import { connect } from '../react-redux';
-import { UserAvatar, ComponentList, RawLabel } from '../common';
+import { UserAvatar, ComponentList, RawLabel, Label } from '../common';
 import { getCurrentRealm, getUserStatusTextForUser } from '../selectors';
 import PresenceStatusIndicator from '../common/PresenceStatusIndicator';
 import ActivityText from '../title/ActivityText';
@@ -43,14 +43,17 @@ class AccountDetails extends PureComponent<Props> {
   render() {
     const { realm, user, userStatusText } = this.props;
 
-    let localTime: string | null = null;
+    let localTime: LocalizableText | null = null;
     // See comments at CrossRealmBot and User at src/api/modelTypes.js.
     if (user.timezone !== '' && user.timezone !== undefined) {
-      try {
-        localTime = `${nowInTimeZone(user.timezone)} Local time`;
-      } catch (err) {
-        // The set of timezone names in the tz database is subject to change over
-        // time. Handle unrecognized timezones by quietly discarding them.
+      const timestamp: number | null = nowInTimeZone(user.timezone);
+      // The set of timezone names in the IANA database is subject to change
+      // over time. Handle unrecognized timezones by quietly discarding them.
+      if (timestamp !== null) {
+        localTime = {
+          text: '{localTime, time, short} local time',
+          values: { localTime: timestamp },
+        };
       }
     }
 
@@ -71,7 +74,7 @@ class AccountDetails extends PureComponent<Props> {
         </View>
         {localTime !== null && (
           <View>
-            <RawLabel style={styles.largerText} text={localTime} />
+            <Label style={styles.largerText} text={localTime} />
           </View>
         )}
       </ComponentList>

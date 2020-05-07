@@ -52,6 +52,7 @@
     "lodash.unescape": "^4.0.1",
     "lodash.union": "^4.6.0",
     "lodash.uniqby": "^4.4.0",
+    "moment-timezone": "^0.5.28",
     "react": "16.8.3",
     "react-intl": "^2.4.0",
     "react-native": "0.59.10",
@@ -84,7 +85,6 @@
     "reselect": "^3.0.1",
     "rn-fetch-blob": "0.10.15",
     "string.fromcodepoint": "^0.2.1",
-    "timezone": "^1.0.13",
     "url-parse": "^1.4.0",
     "url-regex": "^4.1.1",
     "zulip-markdown-parser": "^1.0.6"
