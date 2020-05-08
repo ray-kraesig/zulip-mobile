@@ -195,7 +195,7 @@
   "Do not mark messages read on scroll": "Do not mark messages read on scroll",
   "Topics": "Topics",
   "Add subscribers": "Add subscribers",
-  "{localTime, time, short} local time": "{localTime, time, short} local time",
+  "{timestamp, time, short} local time": "{timestamp, time, short} local time",
   "Set yourself to away": "Set yourself to away",
   "Clear": "Clear",
   "Reactions": "Reactions",

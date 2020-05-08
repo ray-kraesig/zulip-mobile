@@ -4,6 +4,17 @@ import isToday from 'date-fns/is_today';
 import isYesterday from 'date-fns/is_yesterday';
 import isSameYear from 'date-fns/is_same_year';
 
+// We import `moment` here only to ensure we get the version of moment with all
+// the locale data. We don't have any need to use the symbols directly.
+//
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/no-extraneous-dependencies */
+// flowlint untyped-import:off
+import _moment_unused from 'moment/min/moment-with-locales';
+// flowlint untyped-import:error
+/* eslint-enable import/no-extraneous-dependencies */
+/* eslint-enable no-unused-vars */
+
 import moment from 'moment-timezone/builds/moment-timezone-with-data';
 
 export { default as isSameDay } from 'date-fns/is_same_day';
@@ -33,4 +44,14 @@ export const nowInTimeZone = (timezone: string): number | null => {
     return null;
   }
   return moment.tz(new Date(), timezone).unix();
+};
+
+export const nowInTimeZoneF = (timezone: string, locale: string): string | null => {
+  if (!moment.tz.zone(timezone)) {
+    return null;
+  }
+  return moment
+    .tz(new Date(), timezone)
+    .locale(locale)
+    .format('LT');
 };

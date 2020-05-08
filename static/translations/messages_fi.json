@@ -195,6 +195,7 @@
   "Do not mark messages read on scroll": "Älä merkitse viestejä luetuksi vierittäessä",
   "Topics": "Aiheet",
   "Add subscribers": "Add subscribers",
+  "{timestamp} local time": "{timestamp} paikallinen aika",
   "Set yourself to away": "Set yourself to away",
   "Clear": "Clear",
   "Reactions": "Reactions",

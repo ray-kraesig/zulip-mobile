@@ -2,15 +2,17 @@
 import React, { PureComponent } from 'react';
 import { View, StyleSheet } from 'react-native';
 
-import type { UserOrBot, Dispatch, LocalizableText } from '../types';
+import type { UserOrBot, Dispatch, LocalizableText, GetText } from '../types';
 import { connect } from '../react-redux';
 import { UserAvatar, ComponentList, RawLabel, Label } from '../common';
-import { getCurrentRealm, getUserStatusTextForUser } from '../selectors';
+import { getCurrentRealm, getSettings, getUserStatusTextForUser } from '../selectors';
 import PresenceStatusIndicator from '../common/PresenceStatusIndicator';
 import ActivityText from '../title/ActivityText';
 import { getAvatarFromUser } from '../utils/avatar';
-import { nowInTimeZone } from '../utils/date';
+import { nowInTimeZone, nowInTimeZoneF } from '../utils/date';
 import styles from '../styles';
+
+import { TranslationContext } from '../boot/TranslationProvider';
 
 const componentStyles = StyleSheet.create({
   componentListItem: {
@@ -28,6 +30,7 @@ const componentStyles = StyleSheet.create({
 const AVATAR_SIZE = 200;
 
 type SelectorProps = {|
+  locale: string,
   realm: string,
   userStatusText: string | void,
 |};
@@ -40,20 +43,32 @@ type Props = $ReadOnly<{|
 |}>;
 
 class AccountDetails extends PureComponent<Props> {
+  static contextType = TranslationContext;
+  context: GetText;
+
   render() {
-    const { realm, user, userStatusText } = this.props;
+    const { realm, user, locale, userStatusText } = this.props;
+
+    const _ = this.context;
 
     let localTime: LocalizableText | null = null;
     // See comments at CrossRealmBot and User at src/api/modelTypes.js.
     if (user.timezone !== '' && user.timezone !== undefined) {
-      const timestamp: number | null = nowInTimeZone(user.timezone);
+      const moof = ['en', 'ja', 'en_US', 'ja_JP', 'fr_FR', 'de_DE', 'es_MX', 'es'].map(L =>
+        nowInTimeZoneF(user.timezone, L),
+      );
+      console.log({ moof });
+      const timestamp: string | null = nowInTimeZoneF(user.timezone, locale);
       // The set of timezone names in the IANA database is subject to change
       // over time. Handle unrecognized timezones by quietly discarding them.
       if (timestamp !== null) {
         localTime = {
-          text: '{localTime, time, short} local time',
-          values: { localTime: timestamp },
+          text: '{timestamp} local time',
+          values: { timestamp },
         };
+        /* console.log({ id: localTime.text, values: localTime.values });
+        const zeth: string = _.intl.formatMessage({ id: localTime.text }, localTime.values);
+        console.log({ zeth }); */
       }
     }
 
@@ -83,6 +98,7 @@ class AccountDetails extends PureComponent<Props> {
 }
 
 export default connect<SelectorProps, _, _>((state, props) => ({
+  locale: getSettings(state).locale,
   realm: getCurrentRealm(state),
   userStatusText: getUserStatusTextForUser(state, props.user.user_id),
 }))(AccountDetails);
