@@ -181,3 +181,160 @@ describe('getRecentConversations: legacy', () => {
     expect(actual).toEqual(expectedResult);
   });
 });
+
+describe('getRecentConversations: modern', () => {
+  const zulipVersion = new ZulipVersion('2.2.0');
+
+  test('when no recent conversations, return no conversations', () => {
+    const state = eg.reduxState({
+      accounts: [eg.makeAccount({ user: eg.selfUser, zulipVersion })],
+      realm: eg.realmState({ email: eg.selfUser.email }),
+      users: [eg.selfUser],
+    });
+
+    expect(getRecentConversations(state)).toEqual([]);
+  });
+
+  test('returns unique list of recipients, includes conversations with self', () => {
+    const users = [eg.selfUser, eg.makeUser({ name: 'john' }), eg.makeUser({ name: 'mark' })];
+    const user_ids = users.map(s => s.user_id);
+    const huddle_key = [...user_ids].sort((a, b) => a - b).join(',');
+
+    const recentPrivateConversations = [
+      { max_message_id: 4, user_ids: [user_ids[0]] },
+      { max_message_id: 3, user_ids: [user_ids[0], user_ids[1]] },
+      { max_message_id: 2, user_ids: [user_ids[0], user_ids[2]] },
+      { max_message_id: 0, user_ids: [user_ids[0], user_ids[1], user_ids[2]] },
+    ];
+    const unread = {
+      ...eg.baseReduxState.unread,
+      huddles: [
+        {
+          user_ids_string: huddle_key,
+          unread_message_ids: [5],
+        },
+      ],
+      pms: [
+        {
+          sender_id: user_ids[0],
+          unread_message_ids: [4],
+        },
+        {
+          sender_id: user_ids[1],
+          unread_message_ids: [1, 3],
+        },
+        {
+          sender_id: user_ids[2],
+          unread_message_ids: [2],
+        },
+      ],
+    };
+
+    const state = eg.reduxState({
+      accounts: [eg.makeAccount({ user: eg.selfUser, zulipVersion })],
+      realm: eg.realmState({ email: eg.selfUser.email }),
+      users,
+      recentPrivateConversations,
+      unread,
+    });
+
+    expect(getRecentConversations(state)).toEqual([
+      {
+        ids: user_ids[0].toString(),
+        recipients: eg.selfUser.email,
+        msgId: 4,
+        unread: 1,
+      },
+      {
+        ids: user_ids[1].toString(),
+        recipients: users[1].email,
+        msgId: 3,
+        unread: 2,
+      },
+      {
+        ids: user_ids[2].toString(),
+        recipients: users[2].email,
+        msgId: 2,
+        unread: 1,
+      },
+      {
+        ids: huddle_key,
+        recipients: [users[1].email, users[2].email].join(','),
+        msgId: 0,
+        unread: 1,
+      },
+    ]);
+  });
+
+  test('returns recipients sorted by last activity', () => {
+    const users = [eg.selfUser, eg.makeUser({ name: 'john' }), eg.makeUser({ name: 'mark' })];
+    const user_ids = users.map(s => s.user_id);
+    const huddle_key = [...user_ids].sort((a, b) => a - b).join(',');
+
+    const recentPrivateConversations = [
+      { max_message_id: 6, user_ids: [user_ids[0]] },
+      { max_message_id: 5, user_ids: [user_ids[0], user_ids[1], user_ids[2]] },
+      { max_message_id: 4, user_ids: [user_ids[0], user_ids[1]] },
+      { max_message_id: 3, user_ids: [user_ids[0], user_ids[2]] },
+    ];
+    const unread = {
+      streams: [],
+      huddles: [
+        {
+          user_ids_string: huddle_key,
+          unread_message_ids: [5],
+        },
+      ],
+      pms: [
+        {
+          sender_id: user_ids[0],
+          unread_message_ids: [4],
+        },
+        {
+          sender_id: user_ids[1],
+          unread_message_ids: [1, 3],
+        },
+        {
+          sender_id: user_ids[2],
+          unread_message_ids: [2],
+        },
+      ],
+      mentions: [],
+    };
+
+    const state = eg.reduxState({
+      accounts: [eg.makeAccount({ user: eg.selfUser, zulipVersion })],
+      realm: eg.realmState({ email: eg.selfUser.email }),
+      users,
+      recentPrivateConversations,
+      unread,
+    });
+
+    expect(getRecentConversations(state)).toEqual([
+      {
+        ids: user_ids[0].toString(),
+        recipients: eg.selfUser.email,
+        msgId: 6,
+        unread: 1,
+      },
+      {
+        ids: huddle_key,
+        recipients: [users[1].email, users[2].email].join(','),
+        msgId: 5,
+        unread: 1,
+      },
+      {
+        ids: user_ids[1].toString(),
+        recipients: users[1].email,
+        msgId: 4,
+        unread: 2,
+      },
+      {
+        ids: user_ids[2].toString(),
+        recipients: users[2].email,
+        msgId: 3,
+        unread: 1,
+      },
+    ]);
+  });
+});
