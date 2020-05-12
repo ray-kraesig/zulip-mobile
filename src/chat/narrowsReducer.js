@@ -19,10 +19,28 @@ import {
   MENTIONED_NARROW_STR,
   STARRED_NARROW_STR,
   isSearchNarrow,
+  ALL_PRIVATE_NARROW_STR,
 } from '../utils/narrow';
-import { NULL_OBJECT } from '../nullObjects';
 
-const initialState: NarrowsState = NULL_OBJECT;
+/**
+ * Initial state for NarrowsState.
+ */
+const initialState: NarrowsState = Object.freeze({
+  /**
+   * Special narrow used for recent-private-conversation data.
+   *
+   * We explicitly initialize ALL_PRIVATE_NARROW_STR early to avoid a subtle
+   * race condition. At initial-fetch time, we create our event queue, start
+   * polling it, and only then make a targeted request for recent private
+   * messages.
+   *
+   * If ALL_PRIVATE_NARROW_STR were absent, the processing of this request's
+   * response would create it; but if a PM were to come in at the start of event
+   * polling while that request was still in flight, `eventNewMessage` would
+   * not know about ALL_PRIVATE_NARROW_STR in order to store it there.
+   */
+  [ALL_PRIVATE_NARROW_STR]: [],
+});
 
 const messageFetchComplete = (state, action) => {
   // We don't want to accumulate old searches that we'll never need again.

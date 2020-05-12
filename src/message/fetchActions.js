@@ -167,15 +167,20 @@ export const fetchMessagesInNarrow = (
 };
 
 /**
- * Fetch the few most recent PMs.
+ * Fetch the few most recent PMs into the special narrow ALL_PRIVATE_NARROW.
  *
- * We do this eagerly in `doInitialFetch`, where it mainly serves to let us
- * show something useful in the PM conversations screen.  Recent server
- * versions have a custom-made API to help us do this better, which we hope
- * to use soon: see #3133.
+ * We do this eagerly in `doInitialFetch`, where it mainly serves to let us show
+ * something useful in the PM conversations screen. Recent server versions have
+ * a custom-made API to help us do this better, which we hope to use soon: see
+ * #3133.
  *
  * See `fetchMessagesInNarrow` for further background.
  */
+// This function historically had a subtle race condition. If a PM were to come
+// in at the start of event polling while this function is still `await`ing, it
+// would not be sorted into the ALL_PRIVATE_NARROW: the corresponding key would
+// not be created in our NarrowsState until the `messageFetchComplete` below had
+// been dispatched.
 const fetchPrivateMessages = () => async (dispatch: Dispatch, getState: GetState) => {
   const auth = getAuth(getState());
   const { messages, found_newest, found_oldest } = await tryUntilSuccessful(() =>
