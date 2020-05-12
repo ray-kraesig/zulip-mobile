@@ -2,6 +2,7 @@
 import { createSelector } from 'reselect';
 
 import type {
+  GlobalState,
   Message,
   PmConversationData,
   RecentPrivateConversation,
@@ -16,6 +17,7 @@ import { getOwnUser, getAllUsersById } from '../users/userSelectors';
 import { getUnreadByPms, getUnreadByHuddles } from '../unread/unreadSelectors';
 import { normalizeRecipientsSansMe, pmUnreadsKeyFromAllUserIds } from '../utils/recipient';
 import { ZulipVersion } from '../utils/zulipVersion';
+import PmConversationList from './PmConversationList';
 
 /** Intermediate data denoting a single user. Slice of the model type PmRecipientUser. */
 type PmRecipientFragment = { email: string, user_id: number, ... };
@@ -89,40 +91,46 @@ const getRecentConversationsImpl: Selector<PmConversationFragment[]> = createSel
  */
 const DIVIDING_LINE = new ZulipVersion('2.1-dev-384-g4c3c669b41');
 
+// Private. Selector to choose between other selectors. (This avoids needlessly
+// recomputing the old version when we're on a new server, or vice versa.)
+const getMetaselector: Selector<Selector<PmConversationFragment[]>> = createSelector(
+  getServerVersion,
+  (modern, legacy, version) => {
+    // If we're talking to a new enough version of the Zulip server, we don't
+    // need the legacy impl; the modern one will always return a superset of
+    // its content.
+    if (version && version.isAtLeast(DIVIDING_LINE)) {
+      return getRecentConversationsImpl;
+    }
+    // If we're _not_ talking to a newer version of the Zulip server, then
+    // there's no point in using the modern version; it will only return
+    // messages received in the current session, which should all be in the
+    // legacy impl's data as well.
+    return getRecentConversationsLegacyImpl;
+  },
+);
+
+const getRecentConversationsData: GlobalState => PmConversationFragment[] = state =>
+  getMetaselector(state)(state);
+
 /**
  * Get a list of the most recent private conversations, including the most
  * recent message from each.
+ *
+ * Switches between implementations as appropriate for the current server
+ * version.
  */
-// TODO: don't compute `legacy` when `version` indicates it's unneeded
 export const getRecentConversations: Selector<PmConversationData[]> = createSelector(
-  getRecentConversationsImpl,
-  getRecentConversationsLegacyImpl,
-  getServerVersion,
+  getRecentConversationsData,
   getOwnUser,
   getUnreadByPms,
   getUnreadByHuddles,
   (
-    modern,
-    legacy,
-    version: ZulipVersion | null,
+    recentPCs: PmConversationFragment[],
     ownUser: User,
     unreadPms: { [number]: number },
     unreadHuddles: { [string]: number },
   ) => {
-    const isNewServer: boolean = version ? version.isAtLeast(DIVIDING_LINE) : false;
-
-    // prettier-ignore
-    const recentPCs: PmConversationFragment[] = isNewServer
-      // If we're talking to a new enough version of the Zulip server, we don't
-      // need the legacy impl; the modern one will always return a superset of
-      // its content.
-      ? modern
-      // If we're _not_ talking to a newer version of the Zulip server, then
-      // there's no point in using the modern version; it will only return
-      // messages received in the current session, which should all be in the
-      // legacy impl's data as well.
-      : legacy;
-
     const items = recentPCs.map(conversation => {
       const userIds = conversation.recipients.map(s => s.user_id);
       return {
