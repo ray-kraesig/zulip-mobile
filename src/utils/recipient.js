@@ -65,7 +65,8 @@ export const pmUiRecipientsFromMessage = (
 };
 
 /**
- * The set of users to identify a PM conversation by in our data structures.
+ * The set of users to identify a PM conversation by in (most of) our data
+ * structures.
  *
  * Typically we go on to take either the emails or user IDs in the result,
  * stringify them, and join with `,` to produce a string key.  IDs are
@@ -98,28 +99,26 @@ export const pmKeyRecipientsFromMessage = (
 };
 
 /**
- * The key this PM is filed under in the "unread messages" data structure.
+ * The key that a particular private conversation is filed under in the "unread
+ * messages" data structure.
  *
- * Note this diverges slightly from pmKeyRecipientsFromMessage in its
- * behavior -- it encodes a different set of users.
+ * Note this diverges slightly from pmKeyRecipientsFromMessage in its behavior:
+ * it encodes a different set of users.
  *
  * See also:
  *  * `pmKeyRecipientsFromMessage`, which we use for other data structures.
  *  * `UnreadState`, the type of `state.unread`, which is the data structure
  *    these keys appear in.
+ *
+ * @param userIds - List of all users involved in the conversation.
+ * @param ownUserId - Required if there may be exactly two users in the list;
+ *   optional otherwise.
  */
 // Specifically, this includes all user IDs for group PMs and self-PMs,
 // and just the other user ID for non-self 1:1s; and in each case the list
 // is sorted numerically and encoded in ASCII-decimal, comma-separated.
 // See the `unread_msgs` data structure in `src/api/initialDataTypes.js`.
-export const pmUnreadsKeyFromMessage = (message: Message, ownUserId: number): string => {
-  if (message.type !== 'private') {
-    throw new Error('pmUnreadsKeyFromMessage: expected PM, got stream message');
-  }
-  const recipients: PmRecipientUser[] = message.display_recipient;
-  // This includes all users in the thread; see `Message#display_recipient`.
-  const userIds = recipients.map(r => r.id);
-
+export const pmUnreadsKeyFromAllUserIds = (userIds: number[], ownUserId: number): string => {
   if (userIds.length === 1) {
     // Self-PM.
     return userIds[0].toString();
@@ -130,6 +129,25 @@ export const pmUnreadsKeyFromMessage = (message: Message, ownUserId: number): st
     // Group PM.
     return userIds.sort((a, b) => a - b).join(',');
   }
+};
+
+/**
+ * The key this PM is filed under in the "unread messages" data structure.
+ *
+ * Helper function for `pmUnreadsKeyFromAllUserIds` (q.v.).
+ *
+ * @param ownUserId - Required if the message could be a 1:1 PM; optional if
+ *   it is definitely a group PM.
+ */
+export const pmUnreadsKeyFromMessage = (message: Message, ownUserId: number): string => {
+  if (message.type !== 'private') {
+    throw new Error('pmUnreadsKeyFromMessage: expected PM, got stream message');
+  }
+  const recipients: PmRecipientUser[] = message.display_recipient;
+  // This includes all users in the thread; see `Message#display_recipient`.
+  const userIds = recipients.map(r => r.id);
+
+  return pmUnreadsKeyFromAllUserIds(userIds, ownUserId);
 };
 
 export const isSameRecipient = (
