@@ -27,7 +27,11 @@ const eventNewMessage = (state, action) => {
     return state;
   }
 
-  return addItemsToHuddleArray(state, [action.message.id], pmUnreadsKeyFromMessage(action.message));
+  return addItemsToHuddleArray(
+    state,
+    [action.message.id],
+    pmUnreadsKeyFromMessage(action.message, action.ownId),
+  );
 };
 
 const eventUpdateMessageFlags = (state, action) => {
