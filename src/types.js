@@ -319,8 +319,28 @@ export type TabNavigationOptionsPropsType = {|
  * Summary of a PM conversation (either 1:1 or group PMs).
  */
 export type PmConversationData = {|
+  // A comma-separated (numerically-)sorted sequence of the IDs of the users
+  // involved in this conversation. Does not includes the self-user iff there
+  // are _exactly_ two recipients.
+  //
+  // This (frankly bizarre) specification is intended to simultaneously match
+  // the disjoint key-spaces of `unreadPms` and `unreadHuddles`.
+  //
+  // TODO: Remove this field. It's an accidentally-exposed implementation
+  // detail, and isn't used by any downstream consumers.
+  /** Deprecated. Do not add new uses of this property. */
   ids: string,
+
+  /** The most recent message in this conversation. */
   msgId: number,
+
+  /**
+   * A comma-separated sequence of the emails of the users involved in this
+   * conversation, sorted by user ID. Does not include the self-user, unless the
+   * self-user is the only recipient.
+   */
   recipients: string,
+
+  /** The count of unread messages in this conversation. */
   unread: number,
 |};
